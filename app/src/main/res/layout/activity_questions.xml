@@ -18,8 +18,7 @@
         <LinearLayout
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:orientation="horizontal" >
-        </LinearLayout>
+            android:orientation="horizontal"></LinearLayout>
     </com.jskgmail.indiaskills.CenterLockHorizontalScrollview>
 
 
@@ -47,10 +46,11 @@
     <TextView
         android:id="@+id/ques"
         android:layout_width="222dp"
-        android:layout_height="71dp"
-        android:layout_alignStart="@+id/prv"
-        android:layout_below="@+id/scrollView"
-        android:layout_marginTop="11dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="116dp"
         android:gravity="center_vertical"
         android:padding="3dp"
         android:text="Question"
@@ -62,9 +62,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="43dp"
-        android:layout_marginStart="42dp"
+        android:layout_alignStart="@+id/qno"
+        android:layout_marginBottom="22dp"
         android:background="@color/colorPrimary"
         android:text="Previous"
         android:textColor="@android:color/white" />
@@ -73,9 +72,8 @@
         android:id="@+id/nxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_alignEnd="@+id/video"
         android:layout_alignTop="@+id/prv"
-        android:layout_marginEnd="39dp"
         android:background="@color/colorPrimary"
         android:text="Next"
         android:textColor="@android:color/white" />
@@ -85,12 +83,13 @@
         android:layout_width="383dp"
         android:layout_height="275dp"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/ques" />
+        android:layout_below="@+id/video"
+        android:layout_marginTop="4dp" />
 
     <ImageView
         android:id="@+id/video"
         android:layout_width="98dp"
-        android:layout_height="67dp"
+        android:layout_height="75dp"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/ques"
         android:layout_marginEnd="13dp"
@@ -100,11 +99,21 @@
         android:id="@+id/qno"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/ques"
+        android:layout_alignBottom="@+id/ques"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="15dp"
+        android:layout_marginStart="11dp"
         android:text="1."
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/bookmark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/prv"
+        android:layout_centerHorizontal="true"
+        android:background="@color/colorPrimary"
+        android:text="BOOKMARK"
+        android:textColor="@android:color/white" />
 
 </RelativeLayout>

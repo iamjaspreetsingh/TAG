@@ -15,13 +15,14 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="51dp"
         android:indeterminate="true"
+        android:paddingBottom="7dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="60dp" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/text"
         android:layout_width="376dp"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"

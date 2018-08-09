@@ -48,12 +48,15 @@ public class CenterLockHorizontalScrollview extends HorizontalScrollView {
 		}
 	}
 
-	public void setCenter(int index) {
+	public void setCenter(int index,int is_bookmarked) {
 
 		ViewGroup parent = (ViewGroup) getChildAt(0);
 
 		View preView = parent.getChildAt(prevIndex);
-		preView.setBackgroundColor(Color.parseColor("#64CBD8"));
+		//if (!String.valueOf(preView.getBackground()).equals("android.graphics.drawable.ColorDrawable@8f0a669"))
+     //   Log.e("pppppp", String.valueOf(preView.getDrawingCacheBackgroundColor()));
+            preView.setBackgroundColor(Color.GREEN);
+
 		android.widget.LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
 				LinearLayout.LayoutParams.WRAP_CONTENT,
 				LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -72,5 +75,32 @@ public class CenterLockHorizontalScrollview extends HorizontalScrollView {
 		prevIndex = index;
 
 	}
+
+
+    public void setBookmark(int index,int is_bookmarked) {
+
+        ViewGroup parent = (ViewGroup) getChildAt(0);
+
+        View preView = parent.getChildAt(prevIndex);
+       // preView.setBackgroundColor(Color.GREEN);
+        if(is_bookmarked==1)
+            preView.setBackgroundColor(Color.YELLOW);
+
+        android.widget.LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(5, 5, 5, 5);
+        preView.setLayoutParams(lp);
+
+
+
+    }
+
+
+
+
+
+
+
 
 }

@@ -25,29 +25,42 @@
         android:layout_marginTop="69dp"
         app:srcCompat="@android:drawable/screen_background_dark_transparent" />
 
-    <RadioButton
+    <android.support.v7.widget.CardView
+        android:id="@+id/car"
+        android:layout_width="321dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="15dp">
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <CheckedTextView
         android:id="@+id/text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
+        android:layout_height="33dp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_marginEnd="23dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="9dp"
         android:checked="false"
-        android:layoutDirection="rtl"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:gravity="center_vertical"
         android:text="RadioButton" />
+</RelativeLayout>
+    </android.support.v7.widget.CardView>
 
     <TextView
         android:id="@+id/opno"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
-        android:layout_alignBottom="@+id/text"
+        android:layout_alignBottom="@+id/car"
         android:layout_alignParentStart="true"
         android:layout_marginStart="20dp"
         android:gravity="center_vertical"
         android:text="A."
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="16sp" />
-
 </RelativeLayout>

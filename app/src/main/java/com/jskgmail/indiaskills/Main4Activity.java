@@ -52,8 +52,8 @@ public class Main4Activity extends FragmentActivity implements OnMapReadyCallbac
     private TextView lat,longi,address;
     private Button next;
     private GoogleMap mMap;
-    double latitude=28 ;
-    double longitude=77 ;
+   static double latitude=28 ;
+    static double longitude=77 ;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     LocationManager locationManager;
     String provider;
@@ -153,6 +153,7 @@ public class Main4Activity extends FragmentActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main4);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Log.e("testid_uniuqid",Main2Activity.test_id_selected+"   "+Main2Activity.unique_id_selected);
 
         provider = locationManager.getBestProvider(new Criteria(), false);
         checkLocationPermission();
