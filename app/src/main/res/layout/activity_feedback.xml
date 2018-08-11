@@ -4,16 +4,87 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FeedbackActivity">
 
-    <ListView
-        android:id="@+id/quest"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="5dp"
+        android:gravity="center"
+        android:padding="7dp"
+        android:text="FEEDBACK FORM"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="17sp" />
 
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="67dp" />
+    <View
+        android:id="@+id/separator"
+        android:layout_width="fill_parent"
+        android:layout_height="1dip"
+        android:layout_alignParentTop="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="11dp"
+        android:background="@color/colorPrimaryDark" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/quest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="32dp"
+            android:text="TextView"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textSize="15sp"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="67dp" />
+
+        <EditText
+            android:id="@+id/editText2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="14dp"
+            android:ems="10"
+            android:inputType="textPersonName" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal">
+
+            <ru.dimorinny.floatingtextbutton.FloatingTextButton
+                android:id="@+id/back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="110dp"
+                android:paddingRight="15dp"
+                app:floating_background_color="@color/cardview_light_background"
+                app:floating_left_icon="@drawable/ic_arrow_back_black_24dp"
+                app:floating_title="Previous" />
+
+
+            <ru.dimorinny.floatingtextbutton.FloatingTextButton
+                android:id="@+id/nextt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="110dp"
+                android:paddingLeft="15dp"
+                app:floating_background_color="@color/cardview_light_background"
+                app:floating_right_icon="@drawable/ic_arrow_forward_black_24dp"
+                app:floating_title="Next" />
+        </LinearLayout>
+    </LinearLayout>
+
 </LinearLayout>

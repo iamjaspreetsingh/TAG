@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     static  String u_test_id,test_id,type;
     private Button login;
-    static String login_name,login_email,login_phone,userid,apikey;
+    static String login_name,login_email,login_phone,userid,apikey,login_role;
     private String deviceid;
     String TAG = "MAINACTIVITY";
     String url="http://staging.tagusp.com/api/users/login";
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
          arrayList_test_name=new ArrayList<>();
          arrayList_test_id=new ArrayList<>();
-        arrayList_u_test_id=new ArrayList<>();
+         arrayList_u_test_id=new ArrayList<>();
 
 
         deviceid = getdeviceID();
@@ -134,11 +134,12 @@ public class MainActivity extends AppCompatActivity {
                          login_name = (String) jsonobj_2.get("name");
                          login_email=(String)jsonobj_2.get("email");
                          login_phone=(String)jsonobj_2.get("phone");
+                         login_role=(String)jsonobj_2.get("role");
 
                      //    Toast.makeText(getApplicationContext(),jsonobj_2.toString(),Toast.LENGTH_LONG).show();
                         Testdetail(apikey,userid);
 
-                        Log.e("arrgrrrrrghrr", login_name);
+                        Log.e("arrgrrr", login_name);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -150,7 +151,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onErrorResponse(VolleyError error) {
                     Log.e("VolleyError","Error response", error);
                     Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
-
                 }
             }) {
 

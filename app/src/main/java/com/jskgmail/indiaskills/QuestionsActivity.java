@@ -3,6 +3,7 @@ package com.jskgmail.indiaskills;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
@@ -325,16 +326,29 @@ final TextView qno=findViewById(R.id.qno);
 
                                   //  Toast.makeText(getApplicationContext(),quest_id,Toast.LENGTH_LONG).show();
 
-                                    if (i[0]==total_no_of_quest-2)
+                                    if (i[0]==total_no_of_quest-1)
                                     {
                                         next.setText("Submit");
-                                        AddGeofencebody44(testid,userid,api_key,Main4Activity.latitude+":"+Main4Activity.longitude,Main2Activity.unique_id_selected,"dd","P");
+                                     next.setOnClickListener(new View.OnClickListener() {
+                                         @Override
+                                         public void onClick(View view) {
+                                             AddGeofencebody44(testid,userid,api_key,Main4Activity.latitude+":"+Main4Activity.longitude,Main2Activity.unique_id_selected,"dd","P");
+                                             Toast.makeText(getApplicationContext(),"Your answers has been successfully submitted!",Snackbar.LENGTH_LONG).show();
 
-startActivity(new Intent(QuestionsActivity.this,FeedbackActivity.class));
+                                             startActivity(new Intent(QuestionsActivity.this,FeedbackActivity.class));
+                                         }
+                                     });
                                     }
-                                   else
+
+                                    else
 
                                     AddGeofencebody11(testid,userid,api_key,quest_id,Main2Activity.unique_id_selected,ListViewAdapteroptions.ans_clicked,"P");
+
+
+
+
+
+
 
                             }
                             }

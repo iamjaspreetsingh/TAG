@@ -61,6 +61,7 @@ public class Main4Activity extends FragmentActivity implements OnMapReadyCallbac
     String url="http://staging.tagusp.com/api/users/Language";
     String url1="http://staging.tagusp.com/api/users/Instruction";
     String url11="http://staging.tagusp.com/api/users/BatchList";
+    ArrayList<String> instructionsss=new ArrayList<String>();
 
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
@@ -214,7 +215,12 @@ public class Main4Activity extends FragmentActivity implements OnMapReadyCallbac
         final TextView instructions=alertLayout.findViewById(R.id.instructions);
         final Spinner languages=alertLayout.findViewById(R.id.languages);
         final String[] lang = {"English"};
-        instructions.setText(instructionList);
+        StringBuilder inst_text= new StringBuilder();
+        for (int i=0;i<instructionsss.size();i++)
+        {
+           inst_text.append(instructionsss.get(i));
+        }
+        instructions.setText(inst_text);
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
         // this is set the view from XML inside AlertDialog
@@ -397,7 +403,7 @@ public class Main4Activity extends FragmentActivity implements OnMapReadyCallbac
         params.put("languageCode",langcode);
 
         Log.e("params :",params.toString());
-
+        final JSONObject[] instr = new JSONObject[1];
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,url1, new JSONObject(params)
                 //   null
@@ -408,13 +414,16 @@ public class Main4Activity extends FragmentActivity implements OnMapReadyCallbac
                   Toast.makeText(getApplicationContext(),"success"+response.toString(),Toast.LENGTH_SHORT).show();
 
                 try {
-                    instructionList=(String)response.get("instructionList");
+                    JSONArray jsonArray=response.getJSONArray("instructionList");
+                    for (int i=0;i<jsonArray.length();i++)
+                    {   instr[0] = (JSONObject) jsonArray.get(i);
 
-                    Toast.makeText(getApplicationContext(),"success"+instructionList,Toast.LENGTH_SHORT).show();
+
+                    Toast.makeText(getApplicationContext(),"success"+jsonArray.length(),Toast.LENGTH_SHORT).show();
                     //   handler=new Handler(callback);
                     //    Message msg = null;
                     //   handler.handleMessage(msg);
-
+instructionsss.add( String.valueOf(instr[0].get("instruction")));}
                 } catch (JSONException e) {
                     e.printStackTrace();
               }

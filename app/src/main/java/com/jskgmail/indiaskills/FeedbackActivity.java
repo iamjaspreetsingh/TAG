@@ -1,9 +1,14 @@
 package com.jskgmail.indiaskills;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +25,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import ru.dimorinny.floatingtextbutton.FloatingTextButton;
 
 public class FeedbackActivity extends AppCompatActivity {
 
@@ -47,6 +54,33 @@ ListView listView;
 
     protected void AddGeofencebody44(String userid,String apikey)
     {
+
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.loading, null);
+        final TextView text=alertLayout.findViewById(R.id.text);
+
+        text.setText("Preparing the feedback form!");
+        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        // this is set the view from XML inside AlertDialog
+        alert.setView(alertLayout);
+
+
+        // disallow cancel of AlertDialog on click of back button and outside touch
+        //   alert.setTitle("Password ");
+        //  alert.setIcon(R.drawable.ic_lock_outline_black_24dp);
+        final AlertDialog dialog = alert.create();
+        dialog.show();
+
+
+
+
+
+
+
+
+
+
         Map<String, String> params = new HashMap<>();
 
         params.put("userId", userid);
@@ -56,6 +90,8 @@ ListView listView;
         ListViewAdapteroptions.ans_clicked=new ArrayList<String>();
 
         final TextView qu=findViewById(R.id.quest);
+        final FloatingTextButton next=findViewById(R.id.nextt);
+        final FloatingTextButton pre=findViewById(R.id.back);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,url, new JSONObject(params)
                 //   null
@@ -63,6 +99,8 @@ ListView listView;
             @Override
             public void onResponse(JSONObject response) {
                 //
+                dialog.cancel();
+                final int[] qno = {0};
                 Toast.makeText(getApplicationContext(),"succ submit",Toast.LENGTH_LONG).show();
                 JSONArray jsonArray = null;
                 try {
@@ -70,29 +108,115 @@ ListView listView;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-JSONObject question = null;
-                String ques_str = null,quest_id=null;
+                final JSONObject[] question = {null};
+                final String[] ques_str = {null};
+                final String[] quest_id = { null };
 
                 assert jsonArray != null;
-                for (int i = 0; i<jsonArray.length(); i++)
+
+                if( qno[0] <jsonArray.length())
                 {
 
                     try {
-                        question= (JSONObject) jsonArray.get(i);
+                        question[0] = (JSONObject) jsonArray.get(qno[0]);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                     try {
-                        assert question != null;
-                        ques_str= (String) question.get("question");
-                     quest_id=(String) question.get("id");
-                     arrayList_quest.add(ques_str);
-                     arrayList_quest_id.add(quest_id);
-                      //  qu.setText(ques_str);
+                        assert question[0] != null;
+                        ques_str[0] = (String) question[0].get("question");
+                     quest_id[0] =(String) question[0].get("id");
+                  //   arrayList_quest.add(ques_str);
+                  //   arrayList_quest_id.add(quest_id);
+                       qu.setText(ques_str[0]);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+
+                    final JSONArray finalJsonArray = jsonArray;
+                    next.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if( qno[0] < finalJsonArray.length())
+                            {
+                                qno[0]++;
+
+                                try {
+                                    question[0] = (JSONObject) finalJsonArray.get(qno[0]);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                try {
+                                    assert question[0] != null;
+                                    ques_str[0] = (String) question[0].get("question");
+                                    quest_id[0] =(String) question[0].get("id");
+                                    //   arrayList_quest.add(ques_str);
+                                    //   arrayList_quest_id.add(quest_id);
+                                    qu.setText(ques_str[0]);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                                //    Log.e("qqqqqqq",ques_str);
+                            }
+
+
+                            if( qno[0] == finalJsonArray.length())
+                            {
+                                next.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Toast.makeText(getApplicationContext(),"Your feedback has been successfully submitted! Please login again for another test.",Snackbar.LENGTH_LONG).show();
+                                        startActivity(new Intent(FeedbackActivity.this,MainActivity.class));
+                                    }
+                                });
+                            }
+
+
+
+
+
+
+
+                        }
+                    });
+
+
+
+
+                    pre.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if( qno[0] >0)
+                            {
+                                qno[0]--;
+
+                                try {
+                                    question[0] = (JSONObject) finalJsonArray.get(qno[0]);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                try {
+                                    assert question[0] != null;
+                                    ques_str[0] = (String) question[0].get("question");
+                                    quest_id[0] =(String) question[0].get("id");
+                                    //   arrayList_quest.add(ques_str);
+                                    //   arrayList_quest_id.add(quest_id);
+                                    qu.setText(ques_str[0]);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                                //    Log.e("qqqqqqq",ques_str);
+                            }
+                        }
+                    });
+
                 //    Log.e("qqqqqqq",ques_str);
                 }
                 //    Toast.makeText(getApplicationContext(),"success"+response.toString(),Toast.LENGTH_SHORT).show();
@@ -107,8 +231,8 @@ JSONObject question = null;
                 // } catch (JSONException e) {e.printStackTrace();}
                 // Store the JSON object in JSON array as objects (For level 1 array element i.e Results)
 
-                ListViewAdapterfeed adapter=new ListViewAdapterfeed(FeedbackActivity.this,arrayList_quest,arrayList_quest_id);
-                listView.setAdapter(adapter);
+              //  ListViewAdapterfeed adapter=new ListViewAdapterfeed(FeedbackActivity.this,arrayList_quest,arrayList_quest_id);
+               // listView.setAdapter(adapter);
             }
         }, new Response.ErrorListener() {
             @Override

@@ -1,12 +1,18 @@
 package com.jskgmail.indiaskills;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Camera;
+import android.graphics.SurfaceTexture;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
+import android.view.TextureView;
+import android.widget.FrameLayout;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +20,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class CapturePictureActivity extends AppCompatActivity{
-
+    //Upload_candidate_photo_videos
+    //"userId
+    //api_key
+    //batch_id
+    //type
+    //testID
+    //uniqueID"
     protected static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 0;
     Uri imageUri;
     File photoFile = null;
@@ -88,6 +100,27 @@ public class CapturePictureActivity extends AppCompatActivity{
 
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

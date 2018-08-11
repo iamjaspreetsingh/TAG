@@ -14,6 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 
@@ -123,14 +125,19 @@ if (pic.get(position).equals(""))
 {
     holder.img.setVisibility(View.GONE);
 }
-else     holder.img.setVisibility(View.VISIBLE);
+else {
+    holder.img.setVisibility(View.VISIBLE);
+    Glide.with(context).load(pic.get(position)).into(holder.img);
+
+}
 
             if (vid.get(position).equals(""))
 {
     holder.vid.setVisibility(View.GONE);
-}else     holder.vid.setVisibility(View.VISIBLE);
+}else {
+                holder.vid.setVisibility(View.VISIBLE);
 
-
+            }
         }
         else{
             holder=(ViewHolder)convertView.getTag();
