@@ -90,10 +90,11 @@
         android:id="@+id/qno"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/ques"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="11dp"
+        android:layout_alignTop="@+id/ques"
+        android:layout_marginStart="14dp"
         android:gravity="center_vertical"
+        android:paddingTop="3dp"
         android:text="1."
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="15sp" />

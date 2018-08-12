@@ -14,18 +14,6 @@
         android:textColor="@android:color/white"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/instructions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="15dp"
-        android:layout_marginStart="13dp"
-        android:layout_marginTop="16dp"
-        android:padding="5dp"
-        android:text="You are given 3 hrs "
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        android:textSize="15sp" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -53,4 +41,16 @@
         </Spinner>
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/instructions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="15dp"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="16dp"
+        android:padding="5dp"
+        android:text="You are given 3 hrs "
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textSize="15sp" />
 </LinearLayout>

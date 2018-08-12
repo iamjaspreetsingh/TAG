@@ -16,11 +16,16 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Main3Activity extends AppCompatActivity {
@@ -44,7 +49,114 @@ public class Main3Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main3);
 
-        AddGeofencebody(Main2Activity.test_id_selected, MainActivity.userid, MainActivity.apikey);
+
+
+Toast.makeText(getApplicationContext(),MainActivity.online+"",Toast.LENGTH_LONG).show();
+
+      if (MainActivity.online) {
+            AddGeofencebody(MyTEST_IDs.test_id_selected, MainActivity.userid, MainActivity.apikey);
+        }
+       else
+        {
+
+
+            Type type = new TypeToken<ArrayList<String>>() {
+            }.getType();
+            Type type1 = new TypeToken<ArrayList<ArrayList<String>>>() {
+            }.getType();
+            Type type2 = new TypeToken<ArrayList<ArrayList<ArrayList<String>>>>() {
+            }.getType();
+            Gson gson = new Gson();
+
+
+            DatabaseHandleroff db = new DatabaseHandleroff(getApplicationContext());
+            String test_det_str = null,test_q_str=null,test_ans_str=null,instr = null;
+
+            ArrayList<String> testdet=new ArrayList<>();
+
+            List<TestDetailoff> contacts = db.getAllContacts();
+            for (TestDetailoff cn : contacts) {
+                test_det_str = cn.getTestDetailss_array();
+
+                testdet = gson.fromJson(test_det_str, type);
+
+                if(testdet.get(0).equals(MyTEST_IDs.unique_id_selected))
+                {
+                    test_q_str = cn.getArrayList_3_all_questions();
+                    test_ans_str = cn.getArrayList_3_all_options();
+                    instr = cn.getInstructionList();
+
+
+
+
+
+
+
+
+
+
+
+
+
+                     testName=testdet.get(1);
+                     industry=testdet.get(2);
+                     course=testdet.get(3);
+                     questionCount= Integer.parseInt(testdet.get(4));
+                     totalMark= Integer.parseInt(testdet.get(5));
+                     testType=testdet.get(6);
+                     testPrice=testdet.get(7);
+                     testValidity=testdet.get(8);
+                     testDuration=testdet.get(9);
+                     testDetails=testdet.get(10);
+                     testDescriptions=testdet.get(11);
+                     endTime=testdet.get(12);
+
+                    Resume();
+
+                }
+
+
+            }
+            ArrayList<ArrayList<String>> testdet1 = gson.fromJson(test_q_str, type1);
+            ArrayList<ArrayList<ArrayList<String>>> testdet2 = gson.fromJson(test_ans_str, type2);
+
+            //    Log.e("jjjjjjjjjj", String.valueOf(testdet));
+            //   Log.e("jjjjjjjjjjaa", String.valueOf(testdet1));
+            //      Log.e("jjjjjjjjjjbb", String.valueOf(testdet2));
+            //       Log.e("jjjjjjjjjjccc", String.valueOf(instr));
+
+
+
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         ((Button)findViewById(R.id.cntinue)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,23 +180,19 @@ public class Main3Activity extends AppCompatActivity {
 
     protected void AddGeofencebody(String testid,String userid,String api_key) {
 
+
         LayoutInflater inflater = getLayoutInflater();
         View alertLayout = inflater.inflate(R.layout.loading, null);
         //final ProgressBar progressBar=alertLayout.findViewById(R.id.progressBar);
-
-        final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        AlertDialog.Builder alert= new AlertDialog.Builder(this);
 
         // this is set the view from XML inside AlertDialog
         alert.setView(alertLayout);
 
 
-        // disallow cancel of AlertDialog on click of back button and outside touch
-        //   alert.setTitle("Password ");
-        //  alert.setIcon(R.drawable.ic_lock_outline_black_24dp);
-        final AlertDialog dialog = alert.create();
+
+        final AlertDialog dialog= alert.create();
         dialog.show();
-
-
 
 
 

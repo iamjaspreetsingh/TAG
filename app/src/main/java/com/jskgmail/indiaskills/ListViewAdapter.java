@@ -2,6 +2,7 @@ package com.jskgmail.indiaskills;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,7 @@ public class ListViewAdapter extends BaseAdapter {
     ArrayList<String> name;
     ArrayList<String> id;
     ArrayList<String> uid;
-    public ListViewAdapter(Activity context, ArrayList<String> name, ArrayList<String> id,ArrayList<String> uid)
+    public ListViewAdapter(Activity context, ArrayList<String>uid , ArrayList<String> id,ArrayList<String> name)
     {
         super();
         this.context=context;
@@ -32,7 +33,7 @@ public class ListViewAdapter extends BaseAdapter {
     @Override
     public int getCount() {
 
-        return name.size();
+        return uid.size();
     }
 
     @Override
@@ -48,7 +49,7 @@ public class ListViewAdapter extends BaseAdapter {
     public class ViewHolder{
         TextView txtviewname;
       //  TextView txtviewcity;
-        FloatingTextButton test;
+        FloatingTextButton test,download;
 
 
     }
@@ -64,6 +65,7 @@ public class ListViewAdapter extends BaseAdapter {
             holder=new ViewHolder();
             holder.txtviewname=(TextView)convertView.findViewById(R.id.nam);
             holder.test=convertView.findViewById(R.id.fab1);
+            holder.download=convertView.findViewById(R.id.fab11);
 
           //  holder.txtviewcity=(TextView)convertView.findViewById(R.id.city);
 
@@ -72,10 +74,46 @@ public class ListViewAdapter extends BaseAdapter {
                 @Override
                 public void onClick(View view) {
 
-                    Main2Activity.test_id_selected=id.get(position);
-                    Main2Activity.unique_id_selected=uid.get(position);
+                    MyTEST_IDs.test_id_selected=id.get(position);
+                    MyTEST_IDs.unique_id_selected=uid.get(position);
+                    MyTEST_IDs.test_name_selected=name.get(position);
 
+                    MainActivity.online=true;
                     context.startActivity(new Intent(context,Main3Activity.class));
+
+                }
+            });
+
+            holder.download.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                   MyTEST_IDs.test_id_selected=id.get(position);
+                   MyTEST_IDs.unique_id_selected=uid.get(position);
+                   MyTEST_IDs.test_name_selected=name.get(position);
+
+
+
+                    LayoutInflater inflater = context.getLayoutInflater();
+                    View alertLayout = inflater.inflate(R.layout.loading, null);
+                    TextView text=alertLayout.findViewById(R.id.text);
+                    text.setText("Downloading the test...");
+                    //final ProgressBar progressBar=alertLayout.findViewById(R.id.progressBar);
+                    AlertDialog.Builder alert= new AlertDialog.Builder(context);
+
+                    // this is set the view from XML inside AlertDialog
+                    alert.setView(alertLayout);
+
+
+
+                    final AlertDialog dialog= alert.create();
+                    dialog.show();
+
+
+                    SaveTestOfflineActivity saveTestOfflineActivity = new SaveTestOfflineActivity();
+                   SaveTestOfflineActivity.context=context;
+                    saveTestOfflineActivity.onCreate();
+
+
 
                 }
             });
@@ -87,7 +125,7 @@ public class ListViewAdapter extends BaseAdapter {
         }
 
 
-       // notifyDataSetChanged();
+        notifyDataSetChanged();
         return convertView;
     }
 

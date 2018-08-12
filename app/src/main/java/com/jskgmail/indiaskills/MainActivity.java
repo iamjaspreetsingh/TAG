@@ -4,6 +4,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -28,10 +30,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-   static ArrayList<String> arrayList_test_name=new ArrayList<>();
-   static ArrayList<String> arrayList_test_id=new ArrayList<>();
-    static ArrayList<String> arrayList_u_test_id=new ArrayList<>();
+   static ArrayList<String> arrayList_test_name;
+   static ArrayList<String> arrayList_test_id;
+    static ArrayList<String> arrayList_u_test_id;
 
+    static boolean online=true;
     static  String u_test_id,test_id,type;
     private Button login;
     static String login_name,login_email,login_phone,userid,apikey,login_role;
@@ -47,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+online=isNetworkAvailable();
          arrayList_test_name=new ArrayList<>();
          arrayList_test_id=new ArrayList<>();
          arrayList_u_test_id=new ArrayList<>();
@@ -216,7 +219,9 @@ public class MainActivity extends AppCompatActivity {
         params.put("api_key", apikey);
         params.put("userId", userid);
         Log.e("params :",params.toString());
-
+        arrayList_test_id=new ArrayList<>();
+        arrayList_u_test_id=new ArrayList<>();
+        arrayList_test_name=new ArrayList<>();
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,url1, new JSONObject(params)
                 //   null
                 , new Response.Listener<JSONObject>() {
@@ -228,19 +233,28 @@ public class MainActivity extends AppCompatActivity {
 
                 try {
                     JSONArray array=response.getJSONArray("testList");
+
 for (int i=0;i<array.length();i++) {
     JSONObject jsonobj_2 = (JSONObject) array.get(i);
      test_id = (String) jsonobj_2.get("id");
      u_test_id = (String) jsonobj_2.get("uniqueID");
     String purchasedTime = (String) jsonobj_2.get("purchasedTime");
     String testName = (String) jsonobj_2.get("testName");
-    Log.e("arrgrrrrrhhtestid", test_id);
+
     arrayList_test_id.add(test_id);
     arrayList_u_test_id.add(u_test_id);
     arrayList_test_name.add(testName);
-Log.e("aaaaaaaaaaaa",jsonobj_2.toString());
+
+
+    if (i==array.length()-1)
+    {
+        startActivity(new Intent(MainActivity.this, Main5Activity.class));
+        Log.e("ttttttteeeeeeeeesssst",arrayList_test_name.toString());
+
+    }
+
+
 }
-                    startActivity(new Intent(MainActivity.this, Main2Activity.class));
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -284,7 +298,12 @@ Log.e("aaaaaaaaaaaa",jsonobj_2.toString());
 
 
 
-
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
 
 

@@ -4,23 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cardview_shadow_end_color"
-    android:orientation="vertical"
-    tools:context=".Main2Activity">
+    tools:context=".SaveTestOfflineActivity">
 
     <ListView
-        android:id="@+id/listview"
+        android:id="@+id/offtest"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-
-
-
-
-
-
-
-
-
-
 </LinearLayout>

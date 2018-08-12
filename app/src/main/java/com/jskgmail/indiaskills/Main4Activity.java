@@ -35,12 +35,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +53,7 @@ import java.util.Map;
 public class Main4Activity extends FragmentActivity implements OnMapReadyCallback {
 
     private TextView lat,longi,address;
+    String instr_str="Give your test following all the rules";
     private Button next;
     private GoogleMap mMap;
    static double latitude=28 ;
@@ -57,7 +61,10 @@ public class Main4Activity extends FragmentActivity implements OnMapReadyCallbac
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     LocationManager locationManager;
     String provider;
-    static String id,languageName="ENGLISH",languageCode="en",instructionList="Be truthful!";
+    static String id,languageCode_selected="en",instructionList="Be truthful!";
+    static ArrayList<String> languageCode=new ArrayList<>();
+    static ArrayList<String> languageName=new ArrayList<>();
+
     String url="http://staging.tagusp.com/api/users/Language";
     String url1="http://staging.tagusp.com/api/users/Instruction";
     String url11="http://staging.tagusp.com/api/users/BatchList";
@@ -153,8 +160,11 @@ public class Main4Activity extends FragmentActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main4);
+ languageCode=new ArrayList<>();
+languageName=new ArrayList<>();
+
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Log.e("testid_uniuqid",Main2Activity.test_id_selected+"   "+Main2Activity.unique_id_selected);
+        Log.e("testid_uniuqid", MyTEST_IDs.test_id_selected+"   "+ MyTEST_IDs.unique_id_selected);
 
         provider = locationManager.getBestProvider(new Criteria(), false);
         checkLocationPermission();
@@ -163,12 +173,6 @@ public class Main4Activity extends FragmentActivity implements OnMapReadyCallbac
         address=findViewById(R.id.address);
         next=findViewById(R.id.next);
 
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                testinstructions();
-            }
-        });
 
         GPSTracker gps = new GPSTracker(this);
 
@@ -201,12 +205,116 @@ public class Main4Activity extends FragmentActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
 
 
-        AddGeofencebody(Main2Activity.test_id_selected, MainActivity.userid, MainActivity.apikey);
+
+
+        if (MainActivity.online) {
+            AddGeofencebody(MyTEST_IDs.test_id_selected, MainActivity.userid, MainActivity.apikey);
+            next.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    testinstructions();
+                }
+            });
+
+        }
+        else
+        {
+
+            next.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Resume();
+                }
+            });
+
+            Type type = new TypeToken<ArrayList<String>>() {
+            }.getType();
+
+            Gson gson = new Gson();
+
+
+            DatabaseHandleroff db = new DatabaseHandleroff(getApplicationContext());
+            String test_det_str = null;
+
+            ArrayList<String> testdet=new ArrayList<>();
+
+            List<TestDetailoff> contacts = db.getAllContacts();
+            for (TestDetailoff cn : contacts) {
+                test_det_str = cn.getTestDetailss_array();
+
+                testdet = gson.fromJson(test_det_str, type);
+
+                if(testdet.get(0).equals(MyTEST_IDs.unique_id_selected))
+                {
+                  //  test_q_str = cn.getArrayList_3_all_questions();
+                   // test_ans_str = cn.getArrayList_3_all_options();
+                    instr_str = cn.getInstructionList();
+
+
+                }
+
+
+            }
+
+            //    Log.e("jjjjjjjjjj", String.valueOf(testdet));
+            //   Log.e("jjjjjjjjjjaa", String.valueOf(testdet1));
+            //      Log.e("jjjjjjjjjjbb", String.valueOf(testdet2));
+            //       Log.e("jjjjjjjjjjccc", String.valueOf(instr));
+
+
+
+
+        }
+
 
        /// AddGeofencebody11( MainActivity.userid, MainActivity.apikey);
 
 
     }
+
+
+
+
+    void Resume()
+    {
+        LayoutInflater inflater = getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.instruction_dialog, null);
+        //final ProgressBar progressBar=alertLayout.findViewById(R.id.progressBar);
+     TextView inst=alertLayout.findViewById(R.id.instr);
+     inst.setText(instr_str);
+
+        AlertDialog.Builder alert= new AlertDialog.Builder(this);
+        alert.setView(alertLayout);
+
+        alert.setPositiveButton("Next", new DialogInterface.OnClickListener() {
+
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                startActivity(new Intent(Main4Activity.this,QuestionsActivity.class));
+            }
+        });
+
+         AlertDialog dialog= alert.create();
+
+
+
+        dialog.show();
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
 
     private void testinstructions() {
 
@@ -226,10 +334,8 @@ public class Main4Activity extends FragmentActivity implements OnMapReadyCallbac
         // this is set the view from XML inside AlertDialog
         alert.setView(alertLayout);
 
-        List<String> category1 = new ArrayList<String>();
-        category1.add(languageName);
-       // category1.add("Hindi");
-
+        // category1.add("Hindi");
+        List<String> category1 = new ArrayList<String>(languageName);
 
         ArrayAdapter<String> dataAdapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, category1);
         dataAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -238,7 +344,9 @@ public class Main4Activity extends FragmentActivity implements OnMapReadyCallbac
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                lang[0] = (parent.getItemAtPosition(position).toString());
+              //  lang[0] = (parent.getItemAtPosition(position).toString());
+                languageCode_selected=languageCode.get(position);
+                AddGeofencebody1(MyTEST_IDs.test_id_selected, MainActivity.userid, MainActivity.apikey,languageCode_selected);
 
             }
 
@@ -314,9 +422,6 @@ public class Main4Activity extends FragmentActivity implements OnMapReadyCallbac
 
 
 
-
-
-
         Map<String, String> params = new HashMap<>();
         params.put("testID", testid);
         params.put("userId", userid);
@@ -336,21 +441,23 @@ public class Main4Activity extends FragmentActivity implements OnMapReadyCallbac
                 JSONObject resp = null;
                 try {
                     response1=response.getJSONArray("allLanguage");
-                     resp = (JSONObject) response1.get(0);
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    id=(String)resp.get("id");
-                    languageName=(String)resp.get("languageName");
-                    languageCode=(String)resp.get("languageCode");
-                    AddGeofencebody1(Main2Activity.test_id_selected, MainActivity.userid, MainActivity.apikey,languageCode);
+                    for (int i = 0; i<response1.length(); i++) {
+                        resp = (JSONObject) response1.get(i);
 
-                  // Toast.makeText(getApplicationContext(),"success"+languageCode+languageName,Toast.LENGTH_SHORT).show();
-                    //   handler=new Handler(callback);
-                    //    Message msg = null;
-                    //   handler.handleMessage(msg);
+                        assert resp != null;
+                        id = (String) resp.get("id");
+                        languageName.add((String) resp.get("languageName"));
+                        languageCode.add((String) resp.get("languageCode"));
+
+
+                        // Toast.makeText(getApplicationContext(),"success"+languageCode+languageName,Toast.LENGTH_SHORT).show();
+                        //   handler=new Handler(callback);
+                        //    Message msg = null;
+                        //   handler.handleMessage(msg);
+
+                    }
+                    AddGeofencebody1(MyTEST_IDs.test_id_selected, MainActivity.userid, MainActivity.apikey,languageCode_selected);
 
                 } catch (JSONException e) {
                     e.printStackTrace();

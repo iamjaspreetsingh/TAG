@@ -21,13 +21,17 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class QuestionsActivity extends AppCompatActivity {
@@ -40,22 +44,78 @@ TextView ques_textview;
 Button next,prev;
 ImageView q_img;
 ListView List_options;
+
+     TextView bookmark;
+
+     TextView qno;
+
     CenterLockHorizontalScrollview centerLockHorizontalScrollview;
     CustomListAdapter customListAdapter;
     Button btnPrev, btnNext;
     int currIndex = 0;
-@Override
+     TextView timeremaining;
+
+
+
+    ArrayList<String> q_lists_arr=new ArrayList<>();
+    ArrayList<String> q_ids=new ArrayList<>();
+    ArrayList<String> q_imgs=new ArrayList<>();
+    ArrayList<String> q_vids=new ArrayList<>();
+
+
+
+    ArrayList<ArrayList<String>> arrayListArrayList_ans_ids= new ArrayList<>();
+    ArrayList<ArrayList<String>> arrayListArrayList_ans_values= new ArrayList<>();
+    ArrayList<ArrayList<String>> arrayListArrayList_ans_imgs= new ArrayList<>();
+    ArrayList<ArrayList<String>> arrayListArrayList_ans_videos= new ArrayList<>();
+
+
+    ArrayList<String> ArrayList_ans_ids= new ArrayList<>();
+    ArrayList<String> ArrayList_ans_values= new ArrayList<>();
+    ArrayList<String> ArrayList_ans_imgs= new ArrayList<>();
+    ArrayList<String> ArrayList_ans_videos= new ArrayList<>();
+
+
+
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_questions);
 
-        ques_textview=findViewById(R.id.ques);
-        next=findViewById(R.id.nxt);
-        prev=findViewById(R.id.prv);
-        List_options=findViewById(R.id.lv_options);
-        q_img=findViewById(R.id.video);
+        ques_textview = findViewById(R.id.ques);
+        next = findViewById(R.id.nxt);
+        prev = findViewById(R.id.prv);
+        List_options = findViewById(R.id.lv_options);
+        q_img = findViewById(R.id.video);
+        timeremaining = findViewById(R.id.t);
+        bookmark = findViewById(R.id.bookmark);
+currIndex=0;
+        qno = findViewById(R.id.qno);
 
-      /*  ListView lv=findViewById(R.id.lv);
+
+        q_lists_arr = new ArrayList<>();
+        q_ids = new ArrayList<>();
+        q_imgs = new ArrayList<>();
+        q_vids = new ArrayList<>();
+
+
+        arrayListArrayList_ans_ids = new ArrayList<>();
+        arrayListArrayList_ans_values = new ArrayList<>();
+        arrayListArrayList_ans_imgs = new ArrayList<>();
+        arrayListArrayList_ans_videos = new ArrayList<>();
+
+
+        ArrayList_ans_ids = new ArrayList<>();
+        ArrayList_ans_values = new ArrayList<>();
+        ArrayList_ans_imgs = new ArrayList<>();
+        ArrayList_ans_videos = new ArrayList<>();
+
+
+
+
+    /*  ListView lv=findViewById(R.id.lv);
         lv.setRotation(90);
         ArrayList<String> arrayList1=new ArrayList<>();
 
@@ -68,11 +128,353 @@ ListView List_options;
         QuestionListAdapter adapter=new QuestionListAdapter(this,arrayList1);
         lv.setAdapter(adapter);
 */
+        if (MainActivity.online)
+            AddGeofencebody1(MyTEST_IDs.test_id_selected, MainActivity.userid, MainActivity.apikey, Main4Activity.languageCode_selected, MyTEST_IDs.unique_id_selected);
+        else {
 
-        AddGeofencebody1(Main2Activity.test_id_selected, MainActivity.userid, MainActivity.apikey,Main4Activity.languageCode,Main2Activity.unique_id_selected);
+
+            Type type = new TypeToken<ArrayList<String>>() {
+            }.getType();
+            Type type1 = new TypeToken<ArrayList<ArrayList<String>>>() {
+            }.getType();
+            Type type2 = new TypeToken<ArrayList<ArrayList<ArrayList<String>>>>() {
+            }.getType();
+            Gson gson = new Gson();
 
 
+            DatabaseHandleroff db = new DatabaseHandleroff(getApplicationContext());
+            String test_det_str = null, test_q_str = null, test_ans_str = null;
+
+            ArrayList<String> testdet = new ArrayList<>();
+
+            List<TestDetailoff> contacts = db.getAllContacts();
+            for (TestDetailoff cn : contacts) {
+                test_det_str = cn.getTestDetailss_array();
+
+                testdet = gson.fromJson(test_det_str, type);
+
+                if (testdet.get(0).equals(MyTEST_IDs.unique_id_selected)) {
+                    test_q_str = cn.getArrayList_3_all_questions();
+                    test_ans_str = cn.getArrayList_3_all_options();
+
+                    //   Resume();
+                }
+
+            }
+            ArrayList<ArrayList<String>> All_Questions_arr = gson.fromJson(test_q_str, type1);
+            ArrayList<ArrayList<ArrayList<String>>> All_Options_arr = gson.fromJson(test_ans_str, type2);
+
+
+            q_lists_arr = (All_Questions_arr.get(0));
+            q_ids = (All_Questions_arr.get(1));
+            q_imgs = (All_Questions_arr.get(2));
+            q_vids = (All_Questions_arr.get(3));
+
+            arrayListArrayList_ans_ids=All_Options_arr.get(0);
+            arrayListArrayList_ans_imgs=All_Options_arr.get(1);
+            arrayListArrayList_ans_values=All_Options_arr.get(2);
+            arrayListArrayList_ans_videos=All_Options_arr.get(3);
+
+
+
+            final int[] qno_ = {0};
+
+            total_no_of_quest = q_lists_arr.size();
+
+            final ArrayList<String> q_list = new ArrayList<String>();
+            for (int q = 1; q <= total_no_of_quest; q++) {
+                q_list.add(q + "");
+
+            }
+
+            centerLockHorizontalScrollview = (CenterLockHorizontalScrollview) findViewById(R.id.scrollView);
+
+            customListAdapter = new CustomListAdapter(getApplicationContext(),
+                    R.layout.news_list_item, q_list);
+            centerLockHorizontalScrollview.setAdapter(getApplicationContext(), customListAdapter);
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+            final int[] i = {0};
+            {
+
+                    centerLockHorizontalScrollview.setCenter(i[0], 0);
+                    //    text.setText(list.get(currIndex-1));
+
+
+                new CountDownTimer(30000, 1000) {
+
+                    public void onTick(long millisUntilFinished) {
+                        timeremaining.setText("TIME REMAINING: " + millisUntilFinished / 1000);
+                        //here you can have your logic to set text to edittext
+                    }
+
+                    public void onFinish() {
+                        timeremaining.setText("TIME FINISHED !");
+                    }
+
+                }.start();
+
+
+
+                qno.setText((int) (i[0] + 1) + ".)");
+
+                String questvid = q_vids.get(i[0]);
+                String questimg_str = q_imgs.get(i[0]);
+                String questid = q_ids.get(i[0]);
+                String quest_str = q_lists_arr.get(i[0]);
+
+
+                ArrayList_ans_ids=arrayListArrayList_ans_ids.get(i[0]);
+                ArrayList_ans_values=arrayListArrayList_ans_values.get(i[0]);
+                ArrayList_ans_videos=arrayListArrayList_ans_videos.get(i[0]);
+                ArrayList_ans_imgs=arrayListArrayList_ans_imgs.get(i[0]);
+
+
+
+
+                if (questvid.equals("") && (questimg_str.equals(""))) {
+                    q_img.setVisibility(View.INVISIBLE);
+
+                } else {
+                    q_img.setVisibility(View.VISIBLE);
+                    //Picasso.get().load(questimg).into(q_img);
+                    Glide.with(getApplicationContext()).load(questimg_str).into(q_img);
+
+
+                }
+
+                bookmark.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        centerLockHorizontalScrollview.setBookmark(currIndex, 1);
+                        //   AddGeofencebody22(testid,userid,api_key,quest_id, MyTEST_IDs.unique_id_selected,"10","P");
+                    }
+                });
+
+
+                ques_textview.setText(quest_str);
+
+
+
+                ListViewAdapteroptions adapter = new ListViewAdapteroptions(QuestionsActivity.this, ArrayList_ans_values, ArrayList_ans_imgs, ArrayList_ans_videos, ArrayList_ans_ids);
+                List_options.setAdapter(adapter);
+
+
+                next.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                            //    text.setText(list.get(currIndex-1));
+
+
+                        ArrayList<String> arrayList_img = new ArrayList<>();
+                        ArrayList<String> arrayList_vid = new ArrayList<>();
+                        ArrayList<String> arrayList_ans_id = new ArrayList<>();
+                        ArrayList<String> arrayList_ans_value = new ArrayList<>();
+
+
+                        if (i[0] < total_no_of_quest - 1) {
+
+
+                            i[0]++;
+                            centerLockHorizontalScrollview.setCenter(i[0], 0);
+
+                            qno.setText((int) (i[0] + 1) + ".)");
+
+
+                            String questvid = q_vids.get(i[0]);
+                            String questimg_str = q_imgs.get(i[0]);
+                            String questid = q_ids.get(i[0]);
+                            String quest_str = q_lists_arr.get(i[0]);
+
+
+                            ArrayList_ans_ids=arrayListArrayList_ans_ids.get(i[0]);
+                            ArrayList_ans_values=arrayListArrayList_ans_values.get(i[0]);
+                            ArrayList_ans_videos=arrayListArrayList_ans_videos.get(i[0]);
+                            ArrayList_ans_imgs=arrayListArrayList_ans_imgs.get(i[0]);
+
+
+
+
+                            if (questvid.equals("") && (questimg_str.equals(""))) {
+                                q_img.setVisibility(View.INVISIBLE);
+
+                            } else {
+                                q_img.setVisibility(View.VISIBLE);
+                                //Picasso.get().load(questimg).into(q_img);
+                                Glide.with(getApplicationContext()).load(questimg_str).into(q_img);
+
+
+                            }
+
+                            bookmark.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    centerLockHorizontalScrollview.setBookmark(currIndex, 1);
+                                    //   AddGeofencebody22(testid,userid,api_key,quest_id, MyTEST_IDs.unique_id_selected,"10","P");
+                                }
+                            });
+
+
+                            ques_textview.setText(quest_str);
+
+
+
+                            ListViewAdapteroptions adapter = new ListViewAdapteroptions(QuestionsActivity.this, ArrayList_ans_values, ArrayList_ans_imgs, ArrayList_ans_videos, ArrayList_ans_ids);
+                            List_options.setAdapter(adapter);
+
+                            }
+
+
+                            //  Toast.makeText(getApplicationContext(),quest_id,Toast.LENGTH_LONG).show();
+
+                        if (i[0] == total_no_of_quest - 1) {
+                                next.setText("Submit");
+                                next.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        //   AddGeofencebody44(testid,userid,api_key,Main4Activity.latitude+":"+Main4Activity.longitude, MyTEST_IDs.unique_id_selected,"dd","P");
+                                        Toast.makeText(getApplicationContext(), "Your answers has been successfully submitted!", Snackbar.LENGTH_LONG).show();
+
+                                        startActivity(new Intent(QuestionsActivity.this, FeedbackActivity.class));
+                                    }
+                                });
+                            } else
+                                Toast.makeText(getApplicationContext(), "success", Toast.LENGTH_LONG).show();
+
+                        }
+
+                });
+
+
+
+
+
+              ///////////////////////preeee//////////////////////////////////////
+
+
+
+
+
+
+                prev.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if (i[0] >0) {
+
+                            i[0]--;
+
+                            centerLockHorizontalScrollview.setCenter(i[0],0);
+                            //  text.setText(list.get(currIndex==0?0:currIndex-1));
+
+
+
+
+                        ArrayList<String> arrayList_img = new ArrayList<>();
+                        ArrayList<String> arrayList_vid = new ArrayList<>();
+                        ArrayList<String> arrayList_ans_id = new ArrayList<>();
+                        ArrayList<String> arrayList_ans_value = new ArrayList<>();
+
+
+
+
+
+                            qno.setText((int) (i[0] + 1) + ".)");
+
+
+                            String questvid = q_vids.get(i[0]);
+                            String questimg_str = q_imgs.get(i[0]);
+                            String questid = q_ids.get(i[0]);
+                            String quest_str = q_lists_arr.get(i[0]);
+
+
+                            ArrayList_ans_ids=arrayListArrayList_ans_ids.get(i[0]);
+                            ArrayList_ans_values=arrayListArrayList_ans_values.get(i[0]);
+                            ArrayList_ans_videos=arrayListArrayList_ans_videos.get(i[0]);
+                            ArrayList_ans_imgs=arrayListArrayList_ans_imgs.get(i[0]);
+
+
+
+
+                            if (questvid.equals("") && (questimg_str.equals(""))) {
+                                q_img.setVisibility(View.INVISIBLE);
+
+                            } else {
+                                q_img.setVisibility(View.VISIBLE);
+                                //Picasso.get().load(questimg).into(q_img);
+                                Glide.with(getApplicationContext()).load(questimg_str).into(q_img);
+
+
+                            }
+
+                            bookmark.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    centerLockHorizontalScrollview.setBookmark(currIndex, 1);
+                                    //   AddGeofencebody22(testid,userid,api_key,quest_id, MyTEST_IDs.unique_id_selected,"10","P");
+                                }
+                            });
+
+
+                            ques_textview.setText(quest_str);
+
+
+
+                            ListViewAdapteroptions adapter = new ListViewAdapteroptions(QuestionsActivity.this, ArrayList_ans_values, ArrayList_ans_imgs, ArrayList_ans_videos, ArrayList_ans_ids);
+                            List_options.setAdapter(adapter);
+
+                        }
+
+
+                        //  Toast.makeText(getApplicationContext(),quest_id,Toast.LENGTH_LONG).show();
+
+
+
+                    }
+
+                });
+
+
+
+
+
+
+
+
+
+
+
+
+            }
+        }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
 
 
 
@@ -109,11 +511,6 @@ ListView List_options;
 
 
 
-    final TextView timeremaining=findViewById(R.id.t);
-    final TextView bookmark=findViewById(R.id.bookmark);
-
-final TextView qno=findViewById(R.id.qno);
-
         Map<String, String> params = new HashMap<>();
         params.put("testID", testid);
         params.put("userId", userid);
@@ -131,7 +528,8 @@ final TextView qno=findViewById(R.id.qno);
             public void onResponse(JSONObject response) {
                 //
                 try {
-                    final JSONArray questionlist= (JSONArray) response.get("question");
+
+                    final JSONArray questionlist=  response.getJSONArray("question");
                      total_no_of_quest=questionlist.length();
 
               //question ki list at upper
@@ -208,7 +606,7 @@ final TextView qno=findViewById(R.id.qno);
                             @Override
                             public void onClick(View view) {
                                 centerLockHorizontalScrollview.setBookmark(currIndex,1);
-                                AddGeofencebody22(testid,userid,api_key,quest_id,Main2Activity.unique_id_selected,"10","P");
+                                AddGeofencebody22(testid,userid,api_key,quest_id, MyTEST_IDs.unique_id_selected,"10","P");
                             }
                         });
 
@@ -320,7 +718,7 @@ final TextView qno=findViewById(R.id.qno);
                                         public void onClick(View view) {
                                             centerLockHorizontalScrollview.setBookmark(currIndex,1);
 
-                                            AddGeofencebody22(testid,userid,api_key, finalQuest_id,Main2Activity.unique_id_selected,"10","P");
+                                            AddGeofencebody22(testid,userid,api_key, finalQuest_id, MyTEST_IDs.unique_id_selected,"10","P");
                                         }
                                     });
 
@@ -332,7 +730,7 @@ final TextView qno=findViewById(R.id.qno);
                                      next.setOnClickListener(new View.OnClickListener() {
                                          @Override
                                          public void onClick(View view) {
-                                             AddGeofencebody44(testid,userid,api_key,Main4Activity.latitude+":"+Main4Activity.longitude,Main2Activity.unique_id_selected,"dd","P");
+                                             AddGeofencebody44(testid,userid,api_key,Main4Activity.latitude+":"+Main4Activity.longitude, MyTEST_IDs.unique_id_selected,"dd","P");
                                              Toast.makeText(getApplicationContext(),"Your answers has been successfully submitted!",Snackbar.LENGTH_LONG).show();
 
                                              startActivity(new Intent(QuestionsActivity.this,FeedbackActivity.class));
@@ -342,7 +740,7 @@ final TextView qno=findViewById(R.id.qno);
 
                                     else
 
-                                    AddGeofencebody11(testid,userid,api_key,quest_id,Main2Activity.unique_id_selected,ListViewAdapteroptions.ans_clicked,"P");
+                                    AddGeofencebody11(testid,userid,api_key,quest_id, MyTEST_IDs.unique_id_selected,ListViewAdapteroptions.ans_clicked,"P");
 
 
 
@@ -436,13 +834,13 @@ final TextView qno=findViewById(R.id.qno);
                                                 centerLockHorizontalScrollview.setBookmark(currIndex,1);
                                                 //  text.setText(list.get(currIndex==0?0:currIndex-1));
 
-                                            AddGeofencebody22(testid,userid,api_key, finalQuest_id,Main2Activity.unique_id_selected,"10","P");
+                                            AddGeofencebody22(testid,userid,api_key, finalQuest_id, MyTEST_IDs.unique_id_selected,"10","P");
                                         }
                                     });
 
                                     ques_textview.setText(quest);
 
-                                    AddGeofencebody11(testid,userid,api_key,quest_id,Main2Activity.unique_id_selected,ListViewAdapteroptions.ans_clicked,"P");
+                                    AddGeofencebody11(testid,userid,api_key,quest_id, MyTEST_IDs.unique_id_selected,ListViewAdapteroptions.ans_clicked,"P");
 
 
 
