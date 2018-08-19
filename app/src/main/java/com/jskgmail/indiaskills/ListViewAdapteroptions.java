@@ -121,6 +121,9 @@ CardView cardView;
 
 
             holder.txtviewname.setText(text.get(position));
+            Log.e("picccccccisch", String.valueOf(pic.get(position)+"pcc"));
+
+
 if (pic.get(position).equals(""))
 {
     holder.img.setVisibility(View.GONE);
@@ -138,6 +141,7 @@ else {
                 holder.vid.setVisibility(View.VISIBLE);
 
             }
+
         }
         else{
             holder=(ViewHolder)convertView.getTag();

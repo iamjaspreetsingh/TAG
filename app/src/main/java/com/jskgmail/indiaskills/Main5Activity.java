@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -96,17 +97,49 @@ public class Main5Activity extends AppCompatActivity {
             if (getArguments().getInt(ARG_SECTION_NUMBER)==1)
             {
               //  MainActivity.online=true;
-                ListView listView = (ListView) rootView1.findViewById(R.id.listview);
+                ListView listView = (ListView) rootView1.findViewById(R.id.list);
+                TextView no_net=rootView1.findViewById(R.id.noconnection);
+                //  MainActivity.online=false;
+                if (!MainActivity.online)
+                    no_net.setVisibility(View.VISIBLE);
+
+
                 ListViewAdapter adapter=new ListViewAdapter(getActivity(),MainActivity.arrayList_u_test_id,MainActivity.arrayList_test_id,MainActivity.arrayList_test_name);
                 listView.setAdapter(adapter);
+
+
+
+
+
+                /*  RecyclerView recyclerView=rootView1.findViewById(R.id.recyclerview);;
+                CustomAdaptertestlist adapter;
+
+
+                //  MainActivity.online=true;
+                adapter= new CustomAdaptertestlist(getActivity(),MainActivity.arrayList_u_test_id,MainActivity.arrayList_test_id,MainActivity.arrayList_test_name);
+                recyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+                recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+                recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+*/
+
+
+
+
+
+
+
+
+
+
+
                 return rootView1;
 
             }
             else if (getArguments().getInt(ARG_SECTION_NUMBER)==2)
             { ListView listView = (ListView) rootView.findViewById(R.id.offlinetests);
-
-
-          //  MainActivity.online=false;
 
 
 
@@ -143,8 +176,8 @@ public class Main5Activity extends AppCompatActivity {
 
 
                 }
-                ArrayList<ArrayList<String>> testdet1 = gson.fromJson(test_q_str, type1);
-                ArrayList<ArrayList<ArrayList<String>>> testdet2 = gson.fromJson(test_ans_str, type2);
+  //              ArrayList<ArrayList<String>> testdet1 = gson.fromJson(test_q_str, type1);
+//                ArrayList<ArrayList<ArrayList<String>>> testdet2 = gson.fromJson(test_ans_str, type1);
 
                 //    Log.e("jjjjjjjjjj", String.valueOf(testdet));
                 //   Log.e("jjjjjjjjjjaa", String.valueOf(testdet1));

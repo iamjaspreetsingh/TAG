@@ -13,6 +13,8 @@ public class CenterLockHorizontalScrollview extends HorizontalScrollView {
 	Context context;
 	int prevIndex = 0;
 
+	int preBookmarkIndex=-1;
+
 	public CenterLockHorizontalScrollview(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.context = context;
@@ -55,6 +57,9 @@ public class CenterLockHorizontalScrollview extends HorizontalScrollView {
 		View preView = parent.getChildAt(prevIndex);
 		//if (!String.valueOf(preView.getBackground()).equals("android.graphics.drawable.ColorDrawable@8f0a669"))
      //   Log.e("pppppp", String.valueOf(preView.getDrawingCacheBackgroundColor()));
+        if (preBookmarkIndex==prevIndex)
+            preView.setBackgroundColor(Color.YELLOW);
+            else
             preView.setBackgroundColor(Color.GREEN);
 
 		android.widget.LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -83,9 +88,10 @@ public class CenterLockHorizontalScrollview extends HorizontalScrollView {
 
         View preView = parent.getChildAt(prevIndex);
        // preView.setBackgroundColor(Color.GREEN);
-        if(is_bookmarked==1)
+        if(is_bookmarked==1) {
             preView.setBackgroundColor(Color.YELLOW);
-
+            preBookmarkIndex = prevIndex;
+        }
         android.widget.LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);

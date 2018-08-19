@@ -292,7 +292,7 @@ languageName=new ArrayList<>();
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                startActivity(new Intent(Main4Activity.this,QuestionsActivity.class));
+                startActivity(new Intent(Main4Activity.this,BatchListActivity.class));
             }
         });
 
@@ -376,7 +376,7 @@ languageName=new ArrayList<>();
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(Main4Activity.this,QuestionsActivity.class));
+                startActivity(new Intent(Main4Activity.this,BatchListActivity.class));
              //   startActivity(new Intent(Main4Activity.this,HorizontalScrollViewActivity.class));
 //Cappturepic
             }

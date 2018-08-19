@@ -117,8 +117,8 @@ Toast.makeText(getApplicationContext(),MainActivity.online+"",Toast.LENGTH_LONG)
 
 
             }
-            ArrayList<ArrayList<String>> testdet1 = gson.fromJson(test_q_str, type1);
-            ArrayList<ArrayList<ArrayList<String>>> testdet2 = gson.fromJson(test_ans_str, type2);
+  //          ArrayList<ArrayList<String>> testdet1 = gson.fromJson(test_q_str, type1);
+//            ArrayList<ArrayList<ArrayList<String>>> testdet2 = gson.fromJson(test_ans_str, type2);
 
             //    Log.e("jjjjjjjjjj", String.valueOf(testdet));
             //   Log.e("jjjjjjjjjjaa", String.valueOf(testdet1));

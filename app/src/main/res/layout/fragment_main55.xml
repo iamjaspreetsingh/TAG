@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
@@ -12,14 +12,23 @@
 >
 
         <ListView
-            android:id="@+id/listview"
+            android:id="@+id/list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:divider="@null"
-            android:dividerHeight="0dp" />
-
+            android:layout_height="match_parent" />
 
 
     </LinearLayout>
-</android.support.constraint.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/noconnection"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="No active INTERNET available\nOffline tests are available"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="15sp"
+        android:visibility="gone"
+        tools:layout_editor_absoluteX="98dp"
+        tools:layout_editor_absoluteY="303dp" />
+</RelativeLayout>

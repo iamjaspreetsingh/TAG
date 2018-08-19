@@ -2,14 +2,17 @@ package com.jskgmail.indiaskills;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ListView;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,20 +29,30 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import ru.dimorinny.floatingtextbutton.FloatingTextButton;
-
 public class FeedbackActivity extends AppCompatActivity {
 
     String url="http://staging.tagusp.com/api/users/Get_feedback_questions";
     ArrayList<String> arrayList_quest=new ArrayList<String>();
     ArrayList<String> arrayList_quest_id=new ArrayList<String>();
 
-ListView listView;
+RecyclerView recyclerView;
+CustomAdapterfeedback adapter;
+Button submit;
+
         @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
-            listView=findViewById(R.id.listview);
+            recyclerView=findViewById(R.id.listview);
+
+            submit=findViewById(R.id.submit);
+            submit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(FeedbackActivity.this,MainActivity.class));
+                }
+            });
+
 
             AddGeofencebody44(MainActivity.userid,MainActivity.apikey);
 
@@ -89,9 +102,6 @@ ListView listView;
         Log.e("params :",params.toString());
         ListViewAdapteroptions.ans_clicked=new ArrayList<String>();
 
-        final TextView qu=findViewById(R.id.quest);
-        final FloatingTextButton next=findViewById(R.id.nextt);
-        final FloatingTextButton pre=findViewById(R.id.back);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,url, new JSONObject(params)
                 //   null
@@ -113,112 +123,40 @@ ListView listView;
                 final String[] quest_id = { null };
 
                 assert jsonArray != null;
+                for(int i=0;i<jsonArray.length();i++) {
+                    if (qno[0] < jsonArray.length()) {
 
-                if( qno[0] <jsonArray.length())
-                {
-
-                    try {
-                        question[0] = (JSONObject) jsonArray.get(qno[0]);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    try {
-                        assert question[0] != null;
-                        ques_str[0] = (String) question[0].get("question");
-                     quest_id[0] =(String) question[0].get("id");
-                  //   arrayList_quest.add(ques_str);
-                  //   arrayList_quest_id.add(quest_id);
-                       qu.setText(ques_str[0]);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    final JSONArray finalJsonArray = jsonArray;
-                    next.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if( qno[0] < finalJsonArray.length())
-                            {
-                                qno[0]++;
-
-                                try {
-                                    question[0] = (JSONObject) finalJsonArray.get(qno[0]);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-                                try {
-                                    assert question[0] != null;
-                                    ques_str[0] = (String) question[0].get("question");
-                                    quest_id[0] =(String) question[0].get("id");
-                                    //   arrayList_quest.add(ques_str);
-                                    //   arrayList_quest_id.add(quest_id);
-                                    qu.setText(ques_str[0]);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-
-                                //    Log.e("qqqqqqq",ques_str);
-                            }
-
-
-                            if( qno[0] == finalJsonArray.length())
-                            {
-                                next.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        Toast.makeText(getApplicationContext(),"Your feedback has been successfully submitted! Please login again for another test.",Snackbar.LENGTH_LONG).show();
-                                        startActivity(new Intent(FeedbackActivity.this,MainActivity.class));
-                                    }
-                                });
-                            }
-
-
-
-
-
-
-
+                        try {
+                            question[0] = (JSONObject) jsonArray.get(qno[0]);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    });
 
+                        try {
+                            assert question[0] != null;
 
+                            ques_str[0] = (String) question[0].get("question");
+                            quest_id[0] = (String) question[0].get("id");
 
-
-                    pre.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            if( qno[0] >0)
-                            {
-                                qno[0]--;
-
-                                try {
-                                    question[0] = (JSONObject) finalJsonArray.get(qno[0]);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-                                try {
-                                    assert question[0] != null;
-                                    ques_str[0] = (String) question[0].get("question");
-                                    quest_id[0] =(String) question[0].get("id");
-                                    //   arrayList_quest.add(ques_str);
-                                    //   arrayList_quest_id.add(quest_id);
-                                    qu.setText(ques_str[0]);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-
-                                //    Log.e("qqqqqqq",ques_str);
-                            }
+                            arrayList_quest.add(String.valueOf(ques_str[0]));
+                            arrayList_quest_id.add(String.valueOf(quest_id[0]));
+                            //    qu.setText(ques_str[0]);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    });
 
-                //    Log.e("qqqqqqq",ques_str);
+
+                        //    Log.e("qqqqqqq",ques_str);
+                    }
+                    qno[0]++;
                 }
+                adapter= new CustomAdapterfeedback(FeedbackActivity.this,arrayList_quest,arrayList_quest_id);
+                recyclerView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+                recyclerView.setLayoutManager(new LinearLayoutManager(FeedbackActivity.this, LinearLayoutManager.VERTICAL, false));
+                recyclerView.addItemDecoration(new DividerItemDecoration(FeedbackActivity.this, DividerItemDecoration.VERTICAL));
+                recyclerView.setItemAnimator(new DefaultItemAnimator());
+
                 //    Toast.makeText(getApplicationContext(),"success"+response.toString(),Toast.LENGTH_SHORT).show();
                 //     try {
                 //      instructionList=(String)response.get("instructionList");

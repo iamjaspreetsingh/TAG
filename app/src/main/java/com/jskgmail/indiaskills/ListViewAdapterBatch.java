@@ -10,12 +10,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 
-public class ListViewAdapterfeed extends BaseAdapter {
+public class ListViewAdapterBatch extends BaseAdapter {
     Activity context;
     ArrayList<String> q_name;
     ArrayList<String> id;
  //   ArrayList<String> uid;
-    public ListViewAdapterfeed(Activity context, ArrayList<String> name, ArrayList<String> id//, ArrayList<String> uid
+    public ListViewAdapterBatch(Activity context, ArrayList<String> name, ArrayList<String> id//, ArrayList<String> uid
     )
     {
         super();
@@ -30,7 +30,7 @@ public class ListViewAdapterfeed extends BaseAdapter {
     @Override
     public int getCount() {
 
-        return q_name.size();
+        return id.size();
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ListViewAdapterfeed extends BaseAdapter {
     }
 
     public class ViewHolder{
-        TextView txtviewname;
+        TextView txtviewname,txtviewusername;
       //  TextView txtviewcity;
       //  FloatingTextButton test;
 
@@ -58,14 +58,18 @@ public class ListViewAdapterfeed extends BaseAdapter {
         LayoutInflater inflater=context.getLayoutInflater();
         if(convertView==null)
         {
-            convertView=inflater.inflate(R.layout.list_feedback,null);
+            convertView=inflater.inflate(R.layout.list_batch,null);
             holder=new ViewHolder();
-            holder.txtviewname=(TextView)convertView.findViewById(R.id.quest);
-        //    holder.test=convertView.findViewById(R.id.fab1);
+
+            holder.txtviewname=(TextView)convertView.findViewById(R.id.name);
+            holder.txtviewusername=(TextView)convertView.findViewById(R.id.username);
+
+            //    holder.test=convertView.findViewById(R.id.fab1);
 
           //  holder.txtviewcity=(TextView)convertView.findViewById(R.id.city);
 
             holder.txtviewname.setText(q_name.get(position));
+            holder.txtviewusername.setText(id.get(position));
 
            // holder.txtviewcity.setText(id.get(position));
 
@@ -75,7 +79,7 @@ public class ListViewAdapterfeed extends BaseAdapter {
         }
 
 
-       // notifyDataSetChanged();
+        notifyDataSetChanged();
         return convertView;
     }
 

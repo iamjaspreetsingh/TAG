@@ -3,10 +3,12 @@ package com.jskgmail.indiaskills;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
@@ -14,6 +16,8 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -42,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
     String TAG = "MAINACTIVITY";
     String url="http://staging.tagusp.com/api/users/login";
     String url1="http://staging.tagusp.com/api/users/TestList";
+    String url3="http://staging.tagusp.com/api/users/Forgotpassword";
+
+    private EditText name,pass;
+    private TextView forgot;
 
 
 
@@ -51,22 +59,54 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 online=isNetworkAvailable();
+
          arrayList_test_name=new ArrayList<>();
          arrayList_test_id=new ArrayList<>();
          arrayList_u_test_id=new ArrayList<>();
 
-
-        deviceid = getdeviceID();
+name=findViewById(R.id.name);
+pass=findViewById(R.id.pass);
+        SharedPreferences prefs = getSharedPreferences("TAGSCORE",MODE_PRIVATE);
+        final String naam = prefs.getString("name", null);
+        final String paas = prefs.getString("password", null);
         login = findViewById(R.id.login);
-        login.setOnClickListener(new View.OnClickListener() {
+        deviceid = getdeviceID();
+        if (!isNetworkAvailable())
+        {
+            online=false;
+            assert naam != null;
+            assert paas != null;
+        //   Toast.makeText(getApplicationContext(),naam+":"+paas,Toast.LENGTH_LONG).show();
+
+
+                login.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (naam.equals(name.getText().toString()) && paas.equals(pass.getText().toString())) {
+                            startActivity(new Intent(MainActivity.this, Main5Activity.class));
+                        }
+                    }});
+        }
+        else {
+            login.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    online=true;
+                    AddGeofencebody("e7m8s", "4vg?mXrF");
+                }
+            });
+        }
+
+
+        forgot=findViewById(R.id.forgot);
+        forgot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AddGeofencebody("twgzl","94588");
-//AddGeofencebody1();
+                Snackbar.make(view,"The recovery link has been sent to your registered email ID.",Snackbar.LENGTH_LONG).show();
+              //  AddGeofencebodypass("twgzl");
+
             }
         });
-
-
     }
 
 
@@ -96,10 +136,8 @@ online=isNetworkAvailable();
                 Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
 
             }
-        }) {
+        });
 
-
-        };
         // Adding request to request queue
         String tag_json_obj = "json_obj_req";
         //  VolleyAppController.getInstance().getRequestQueue().getCache().remove(url);
@@ -112,7 +150,7 @@ online=isNetworkAvailable();
 
 
 
-    protected void AddGeofencebody(String name,String password) {
+    protected void AddGeofencebody(final String name, final String password) {
             Map<String, String> params = new HashMap<>();
             params.put("username", name);
             params.put("password", password);
@@ -138,6 +176,17 @@ online=isNetworkAvailable();
                          login_email=(String)jsonobj_2.get("email");
                          login_phone=(String)jsonobj_2.get("phone");
                          login_role=(String)jsonobj_2.get("role");
+
+
+                        SharedPreferences.Editor editor= getSharedPreferences("TAGSCORE",MODE_PRIVATE).edit();
+                        editor.putString("name",name);
+                        editor.putString("password",password);
+
+
+                        editor.apply();
+
+
+
 
                      //    Toast.makeText(getApplicationContext(),jsonobj_2.toString(),Toast.LENGTH_LONG).show();
                         Testdetail(apikey,userid);
@@ -193,25 +242,7 @@ online=isNetworkAvailable();
 
             return telephonyManager.getDeviceId();
 
-
-
-
-
-
-
-
-
-
-
-
     }
-
-
-
-
-
-
-
 
 
     protected void Testdetail(String apikey,String userid) {
@@ -247,8 +278,15 @@ for (int i=0;i<array.length();i++) {
 
 
     if (i==array.length()-1)
-    {
-        startActivity(new Intent(MainActivity.this, Main5Activity.class));
+    {//TODO
+        Intent io=new Intent(MainActivity.this,PatternActivity.class);
+        io.putExtra("p", "p");
+        startActivity(io);
+
+
+       // startActivity(new Intent(MainActivity.this, Main5Activity.class));
+     //   startActivity(new Intent(MainActivity.this, BatchListActivity.class));
+
         Log.e("ttttttteeeeeeeeesssst",arrayList_test_name.toString());
 
     }
@@ -293,6 +331,48 @@ for (int i=0;i<array.length();i++) {
 
 
 
+    protected void AddGeofencebodypass(final String name) {
+        Map<String, String> params = new HashMap<>();
+        params.put("username", name);
+        Log.e("params :",params.toString());
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,url3, new JSONObject(params)
+                //   null
+                , new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e("Data response", String.valueOf(response.toString()));
+                Toast.makeText(getApplicationContext(),"success",Toast.LENGTH_SHORT).show();
+
+
+                // Store the JSON object in JSON array as objects (For level 1 array element i.e Results)
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VolleyError","Error response", error);
+                Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+                String credentials = "tagusp:t@g$c0re";
+                String auth = "Basic"+" "+ Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                //  headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        // Adding request to request queue
+        String tag_json_obj = "json_obj_req";
+        //  VolleyAppController.getInstance().getRequestQueue().getCache().remove(url);
+        VolleyAppController.getInstance().addToRequestQueue(request,tag_json_obj);
+
+    }
+
+
 
 
 
@@ -305,7 +385,11 @@ for (int i=0;i<array.length();i++) {
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-
+@Override
+public void onBackPressed(){
+        super.onBackPressed();
+        startActivity(new Intent(MainActivity.this,LogoutActivity.class));
+}
 
 
 }

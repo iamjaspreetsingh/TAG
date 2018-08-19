@@ -6,13 +6,19 @@ import android.os.CountDownTimer;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,12 +45,12 @@ String url="http://staging.tagusp.com/api/users/GetQuestion";
     String url1="http://staging.tagusp.com/api/users/SaveAnswer";
     String url2="http://staging.tagusp.com/api/users/TestSubmit";
 
-    int total_no_of_quest=6;
+ static    int total_no_of_quest=6;
 TextView ques_textview;
 Button next,prev;
 ImageView q_img;
-ListView List_options;
-
+RecyclerView List_options;
+    CustomAdapteroptions adapter;
      TextView bookmark;
 
      TextView qno;
@@ -115,6 +121,57 @@ currIndex=0;
 
 
 
+        Spinner currsemin = (Spinner) findViewById(R.id.spinner);
+        final String[] studentSelected = new String[1];
+        List<String> category1 = BatchListActivity.login_name_arr;
+
+        ArrayAdapter<String> dataAdapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, category1);
+        dataAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        currsemin.setAdapter(dataAdapter1);
+
+
+
+
+        currsemin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                 studentSelected[0] = (parent.getItemAtPosition(position).toString().replaceAll(" ", "").replaceAll("th", "").replace("st", "").replace("nd", "").replace("rd", ""));
+
+                 Intent i=new Intent(QuestionsActivity.this,PatternActivity.class);
+                 i.putExtra("p","c");
+                 startActivity(i);
+
+                 Toast.makeText(getApplicationContext(),"Selected Student: "+studentSelected[0],Toast.LENGTH_LONG).show();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /*  ListView lv=findViewById(R.id.lv);
         lv.setRotation(90);
         ArrayList<String> arrayList1=new ArrayList<>();
@@ -132,7 +189,7 @@ currIndex=0;
             AddGeofencebody1(MyTEST_IDs.test_id_selected, MainActivity.userid, MainActivity.apikey, Main4Activity.languageCode_selected, MyTEST_IDs.unique_id_selected);
         else {
 
-
+            final ArrayList<String> q_list;
             Type type = new TypeToken<ArrayList<String>>() {
             }.getType();
             Type type1 = new TypeToken<ArrayList<ArrayList<String>>>() {
@@ -181,7 +238,7 @@ currIndex=0;
 
             total_no_of_quest = q_lists_arr.size();
 
-            final ArrayList<String> q_list = new ArrayList<String>();
+             q_list = new ArrayList<String>();
             for (int q = 1; q <= total_no_of_quest; q++) {
                 q_list.add(q + "");
 
@@ -228,10 +285,10 @@ currIndex=0;
                 String quest_str = q_lists_arr.get(i[0]);
 
 
-                ArrayList_ans_ids=arrayListArrayList_ans_ids.get(i[0]);
+         //       ArrayList_ans_ids=arrayListArrayList_ans_ids.get(i[0]);
                 ArrayList_ans_values=arrayListArrayList_ans_values.get(i[0]);
-                ArrayList_ans_videos=arrayListArrayList_ans_videos.get(i[0]);
-                ArrayList_ans_imgs=arrayListArrayList_ans_imgs.get(i[0]);
+            //    ArrayList_ans_videos=arrayListArrayList_ans_videos.get(i[0]);
+            //    ArrayList_ans_imgs=arrayListArrayList_ans_imgs.get(i[0]);
 
 
 
@@ -258,10 +315,27 @@ currIndex=0;
 
                 ques_textview.setText(quest_str);
 
+Log.e("aaaaaaaaaansnaa",ArrayList_ans_values+"");
 
 
-                ListViewAdapteroptions adapter = new ListViewAdapteroptions(QuestionsActivity.this, ArrayList_ans_values, ArrayList_ans_imgs, ArrayList_ans_videos, ArrayList_ans_ids);
+
+
+                adapter= new CustomAdapteroptions(QuestionsActivity.this,ArrayList_ans_values, ArrayList_ans_imgs, ArrayList_ans_videos, ArrayList_ans_ids);
+
                 List_options.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+                List_options.setLayoutManager(new LinearLayoutManager(QuestionsActivity.this, LinearLayoutManager.VERTICAL, false));
+                List_options.addItemDecoration(new DividerItemDecoration(QuestionsActivity.this, DividerItemDecoration.VERTICAL));
+                List_options.setItemAnimator(new DefaultItemAnimator());
+
+
+
+
+
+
+
+
+
 
 
                 next.setOnClickListener(new View.OnClickListener() {
@@ -270,11 +344,6 @@ currIndex=0;
 
                             //    text.setText(list.get(currIndex-1));
 
-
-                        ArrayList<String> arrayList_img = new ArrayList<>();
-                        ArrayList<String> arrayList_vid = new ArrayList<>();
-                        ArrayList<String> arrayList_ans_id = new ArrayList<>();
-                        ArrayList<String> arrayList_ans_value = new ArrayList<>();
 
 
                         if (i[0] < total_no_of_quest - 1) {
@@ -292,11 +361,16 @@ currIndex=0;
                             String quest_str = q_lists_arr.get(i[0]);
 
 
+
                             ArrayList_ans_ids=arrayListArrayList_ans_ids.get(i[0]);
                             ArrayList_ans_values=arrayListArrayList_ans_values.get(i[0]);
                             ArrayList_ans_videos=arrayListArrayList_ans_videos.get(i[0]);
-                            ArrayList_ans_imgs=arrayListArrayList_ans_imgs.get(i[0]);
+                          ArrayList_ans_imgs=arrayListArrayList_ans_imgs.get(i[0]);
 
+
+                            Log.e("aaaanswerlsisinn", String.valueOf(arrayListArrayList_ans_values));
+
+                            Log.e("aaaanswerlsisi", String.valueOf(ArrayList_ans_values));
 
 
 
@@ -324,10 +398,17 @@ currIndex=0;
 
 
 
-                            ListViewAdapteroptions adapter = new ListViewAdapteroptions(QuestionsActivity.this, ArrayList_ans_values, ArrayList_ans_imgs, ArrayList_ans_videos, ArrayList_ans_ids);
-                            List_options.setAdapter(adapter);
+                            adapter= new CustomAdapteroptions(QuestionsActivity.this, ArrayList_ans_values, ArrayList_ans_imgs, ArrayList_ans_videos, ArrayList_ans_ids);
 
-                            }
+                            List_options.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
+                            List_options.setLayoutManager(new LinearLayoutManager(QuestionsActivity.this, LinearLayoutManager.VERTICAL, false));
+                            List_options.addItemDecoration(new DividerItemDecoration(QuestionsActivity.this, DividerItemDecoration.VERTICAL));
+                            List_options.setItemAnimator(new DefaultItemAnimator());
+
+
+
+                        }
 
 
                             //  Toast.makeText(getApplicationContext(),quest_id,Toast.LENGTH_LONG).show();
@@ -395,8 +476,8 @@ currIndex=0;
 
                             ArrayList_ans_ids=arrayListArrayList_ans_ids.get(i[0]);
                             ArrayList_ans_values=arrayListArrayList_ans_values.get(i[0]);
-                            ArrayList_ans_videos=arrayListArrayList_ans_videos.get(i[0]);
-                            ArrayList_ans_imgs=arrayListArrayList_ans_imgs.get(i[0]);
+                           ArrayList_ans_videos=arrayListArrayList_ans_videos.get(i[0]);
+                           ArrayList_ans_imgs=arrayListArrayList_ans_imgs.get(i[0]);
 
 
 
@@ -425,8 +506,17 @@ currIndex=0;
 
 
 
-                            ListViewAdapteroptions adapter = new ListViewAdapteroptions(QuestionsActivity.this, ArrayList_ans_values, ArrayList_ans_imgs, ArrayList_ans_videos, ArrayList_ans_ids);
+                            adapter= new CustomAdapteroptions(QuestionsActivity.this, ArrayList_ans_values, ArrayList_ans_imgs, ArrayList_ans_videos, ArrayList_ans_ids);
+                            List_options.setHasFixedSize(false);
+
+                            List_options.setLayoutManager(new LinearLayoutManager(QuestionsActivity.this, LinearLayoutManager.VERTICAL, false));
+                            List_options.addItemDecoration(new DividerItemDecoration(QuestionsActivity.this, DividerItemDecoration.VERTICAL));
+                            List_options.setItemAnimator(new DefaultItemAnimator());
+
+
                             List_options.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
+
 
                         }
 
@@ -628,8 +718,15 @@ currIndex=0;
                             arrayList_vid.add(video);
 
                         }
-                        ListViewAdapteroptions adapter=new ListViewAdapteroptions(QuestionsActivity.this,arrayList_ans_value,arrayList_img,arrayList_vid,arrayList_ans_id);
+                        adapter= new CustomAdapteroptions(QuestionsActivity.this, arrayList_ans_value, arrayList_img, arrayList_vid, arrayList_ans_id);
+
                         List_options.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+                        List_options.setLayoutManager(new LinearLayoutManager(QuestionsActivity.this, LinearLayoutManager.VERTICAL, false));
+                        List_options.addItemDecoration(new DividerItemDecoration(QuestionsActivity.this, DividerItemDecoration.VERTICAL));
+                        List_options.setItemAnimator(new DefaultItemAnimator());
+
+
 
 
 
@@ -638,11 +735,6 @@ currIndex=0;
                             @Override
                             public void onClick(View view) {
 
-                                if (currIndex < q_list.size()) {
-                                    centerLockHorizontalScrollview.setCenter(currIndex,0);
-                                    currIndex++;
-                                //    text.setText(list.get(currIndex-1));
-                                }
 
                                 ArrayList<String> arrayList_img=new ArrayList<>();
                                 ArrayList<String> arrayList_vid=new ArrayList<>();
@@ -655,6 +747,8 @@ currIndex=0;
 
 
                                     i[0]++;
+                                    centerLockHorizontalScrollview.setCenter(i[0],0);
+
                                     qno.setText((int)(i[0]+1)+".)");
                                 JSONObject question = null;
 
@@ -668,7 +762,7 @@ currIndex=0;
 
                                     String ansid="";
                                     try {
-                                        quest = (String) question.get("question");
+                                        quest = String.valueOf( question.get("question"));
                                          questvid= (String) question.get("questionVedio");
                                          questimg= (String) question.get("questionImage");
                                         quest_id=(String) question.get("id");
@@ -692,8 +786,15 @@ currIndex=0;
                                             arrayList_img.add(img);
                                             arrayList_vid.add(video);
                                         }
-                                        ListViewAdapteroptions adapter=new ListViewAdapteroptions(QuestionsActivity.this,arrayList_ans_value,arrayList_img,arrayList_vid,arrayList_ans_id);
+                                        adapter= new CustomAdapteroptions(QuestionsActivity.this, arrayList_ans_value, arrayList_img, arrayList_vid, arrayList_ans_id);
+
                                         List_options.setAdapter(adapter);
+                                        adapter.notifyDataSetChanged();
+                                        List_options.setLayoutManager(new LinearLayoutManager(QuestionsActivity.this, LinearLayoutManager.VERTICAL, false));
+                                        List_options.addItemDecoration(new DividerItemDecoration(QuestionsActivity.this, DividerItemDecoration.VERTICAL));
+                                        List_options.setItemAnimator(new DefaultItemAnimator());
+
+
 
                                     } catch (JSONException e) {
                                     e.printStackTrace();
@@ -757,11 +858,6 @@ currIndex=0;
                             public void onClick(View view) {
 
 
-                                if (currIndex != 0) {
-                                    currIndex--;
-                                    centerLockHorizontalScrollview.setCenter(currIndex,0);
-                                  //  text.setText(list.get(currIndex==0?0:currIndex-1));
-                                }
 
 
 
@@ -773,7 +869,12 @@ currIndex=0;
                                 if (i[0]>0)
                                 {
 
+
+                                        //  text.setText(list.get(currIndex==0?0:currIndex-1));
+
                                 i[0]--;
+                                    centerLockHorizontalScrollview.setCenter(i[0],0);
+
                                     qno.setText((int)(i[0]+1)+".)");
 
                                     JSONObject question = null;
@@ -805,8 +906,15 @@ currIndex=0;
                                         arrayList_vid.add(video);
 
                                     }
-                                    ListViewAdapteroptions adapter=new ListViewAdapteroptions(QuestionsActivity.this,arrayList_ans_value,arrayList_img,arrayList_vid,arrayList_ans_id);
+                                    adapter= new CustomAdapteroptions(QuestionsActivity.this, arrayList_ans_value, arrayList_img, arrayList_vid, arrayList_ans_id);
+
                                     List_options.setAdapter(adapter);
+                                    adapter.notifyDataSetChanged();
+                                    List_options.setLayoutManager(new LinearLayoutManager(QuestionsActivity.this, LinearLayoutManager.VERTICAL, false));
+                                    List_options.addItemDecoration(new DividerItemDecoration(QuestionsActivity.this, DividerItemDecoration.VERTICAL));
+                                    List_options.setItemAnimator(new DefaultItemAnimator());
+
+
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -1097,7 +1205,8 @@ Log.e("ccccaaaaaaaasds", String.valueOf(ans_id));
 
 
 
-    protected void AddGeofencebody44(String testid,String userid,String api_key,String endlatlong,String u_test_id,String endlocation,String ver) {
+    protected void AddGeofencebody44(String testid,String userid,String api_key,String endlatlong,String u_test_id,String endlocation,String ver)
+    {
 
         final TextView qno=findViewById(R.id.qno);
         //Log.e("ccccaaaaaaaasds", String.valueOf(ans_id));

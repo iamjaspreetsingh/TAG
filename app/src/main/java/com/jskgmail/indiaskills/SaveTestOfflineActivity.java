@@ -444,14 +444,15 @@ private void getquests()
                     ArrayList<ArrayList> arrayListArrayList_ans_imgs=new ArrayList<>();
                     ArrayList<ArrayList> arrayListArrayList_ans_videos=new ArrayList<>();
 
-                        ArrayList<String> arrayList_img=new ArrayList<>();
-                        ArrayList<String> arrayList_vid=new ArrayList<>();
-                        ArrayList<String> arrayList_ans_id=new ArrayList<>();
-                        ArrayList<String> arrayList_ans_value=new ArrayList<>();
 
 
                     for (int i=0;i<questionlist.length();i++) {
-    JSONObject question = (JSONObject) questionlist.get(i);
+                        ArrayList<String> arrayList_ans_value=new ArrayList<>();
+                        ArrayList<String> arrayList_img=new ArrayList<>();
+                        ArrayList<String> arrayList_vid=new ArrayList<>();
+                        ArrayList<String> arrayList_ans_id=new ArrayList<>();
+
+                        JSONObject question = (JSONObject) questionlist.get(i);
     questions_Arr_list.add((String) question.get("question"));
     questions_Arr_id.add( (String) question.get("id"));
 
@@ -469,6 +470,8 @@ private void getquests()
         String ans_value = (String) option.get("value");
 
         arrayList_ans_id.add(ans_id);
+        Log.e("anssss" +
+                "vvv",ans_value);
         arrayList_ans_value.add(ans_value);
         arrayList_img.add(img);
         arrayList_vid.add(video);
@@ -478,7 +481,7 @@ private void getquests()
 
 
 
-                        arrayListArrayList_ans_ids.add(arrayList_ans_id);
+    arrayListArrayList_ans_ids.add(arrayList_ans_id);
     arrayListArrayList_ans_imgs.add(arrayList_img);
     arrayListArrayList_ans_values.add(arrayList_ans_value);
     arrayListArrayList_ans_videos.add(arrayList_vid);
@@ -493,10 +496,10 @@ private void getquests()
                     arrayList_3_all_questions.add(questions_Arr_img);
                     arrayList_3_all_questions.add(questions_Arr_video);
 
-                    arrayList_3_all_options.add(arrayListArrayList_ans_ids);
-                    arrayList_3_all_options.add(arrayListArrayList_ans_imgs);
-                    arrayList_3_all_options.add(arrayListArrayList_ans_values);
-                    arrayList_3_all_options.add(arrayListArrayList_ans_videos);
+                   arrayList_3_all_options.add(arrayListArrayList_ans_ids);
+                   arrayList_3_all_options.add(arrayListArrayList_ans_imgs);
+                  arrayList_3_all_options.add(arrayListArrayList_ans_values);
+                   arrayList_3_all_options.add(arrayListArrayList_ans_videos);
 
                     saveoffline();
                     Log.e("aaaaaaaaaa",arrayList_3_all_options.toString());
