@@ -14,6 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 public class CustomAdapteroptions extends RecyclerView.Adapter<CustomAdapteroptions.ViewHolder> {
@@ -23,21 +25,22 @@ public class CustomAdapteroptions extends RecyclerView.Adapter<CustomAdapteropti
     ArrayList<String> pic;
     ArrayList<String> vid;
     ArrayList<String> id;
-    ArrayList<String> qno;
+    int qno;
 
     static ArrayList<String> ans_clicked=new ArrayList<String>();
-    static ArrayList<ArrayList<String>> ansforquest=new ArrayList<>();
+    static ArrayList<String> ansforquest=new ArrayList<>();
 
     String[] op={"A","B","C","D","E","F","G","H"};
 
 
-    public CustomAdapteroptions(Context context,ArrayList<String> text, ArrayList<String> pic, ArrayList<String> vid, ArrayList<String> id)
+    public CustomAdapteroptions(Context context,int qno,ArrayList<String> text, ArrayList<String> pic, ArrayList<String> vid, ArrayList<String> id)
     {
         this.context = context;
         this.text=text;
         this.pic=pic;
         this.vid=vid;
         this.id=id;
+        this.qno=qno;
 
 
     }
@@ -67,7 +70,7 @@ public class CustomAdapteroptions extends RecyclerView.Adapter<CustomAdapteropti
     //    batch_info info= infos.get(position);
 
         //  Toast.makeText(context, feed.getUsername(), Toast.LENGTH_SHORT).show();
-
+       // ansforquest.set(qno-1,ans_clicked);
 
         holder.opno.setText(op[position]+".");
 
@@ -76,37 +79,45 @@ public class CustomAdapteroptions extends RecyclerView.Adapter<CustomAdapteropti
             //     ans_clicked.add(id.get(position));
         else
             holder.cardView.setCardBackgroundColor(Color.TRANSPARENT);
-/*
 
-for (int i=0;i<ansforquest.size();i++)
-{
-    if (Integer.parseInt(qno.get(position))==(i+1))
-    {
-        for (int j=0;j<ans_clicked.size();j++)
-        {
-            if (ansforquest.get(Integer.parseInt(qno.get(position))).equals(id.get(position)))
+
+//if (ansforquest.size()>qno-1)
+    for (int j=0;j<ansforquest.size();j++)
+            if (ansforquest.get(j).equals(id.get(position))) {
                 holder.cardView.setCardBackgroundColor(Color.LTGRAY);
+                holder.txtviewname.setChecked(true);
+            }
 
-        }
 
-    }
-}
-*/
+
+
         holder.txtviewname.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 holder.txtviewname.setChecked(!holder.txtviewname.isChecked());
 
                 if (holder.txtviewname.isChecked())
                 {
                     holder.cardView.setCardBackgroundColor(Color.LTGRAY);
                     ans_clicked.add(id.get(position));
-                //    ansforquest.set(Integer.parseInt(qno.get(position)),ans_clicked);
-                  //  Log.e("ans_saved",ansforquest+"");
+                   // ansforquest=new ArrayList<String>();
+
+                    ansforquest.add(id.get(position));
+
+                    Log.e("ans_saved",qno-1+"");
+                    Log.e("ans_saved",ansforquest+"");
 
                 }else
                 {
                     holder.cardView.setCardBackgroundColor(Color.TRANSPARENT);
+                    ans_clicked.remove(id.get(position));
+                   // ansforquest=new ArrayList<String>();
+
+                    for (int k=0;k<ansforquest.size();k++)
+                        if (ansforquest.get(k).equals(id.get(position)))
+                    ansforquest.remove(k);
+                    Log.e("ans_saved",ansforquest+"");
 
 
                     //if (ans_clicked.contains(id.get(position)))
@@ -126,6 +137,26 @@ for (int i=0;i<ansforquest.size();i++)
 
        // Glide.with(context).load(info.getPhoto()).into(holder.photo);
 
+
+        if (pic.get(position).equals(""))
+        {
+            holder.img.setVisibility(View.GONE);
+        }
+        else {
+            holder.img.setVisibility(View.VISIBLE);
+            Glide.with(context).load(pic.get(position)).into(holder.img);
+
+
+        }
+
+        if (vid.get(position).equals(""))
+        {
+            holder.vid.setVisibility(View.GONE);
+        }else {
+            holder.vid.setVisibility(View.VISIBLE);
+
+            holder.vid.start();
+        }
 
 
     }

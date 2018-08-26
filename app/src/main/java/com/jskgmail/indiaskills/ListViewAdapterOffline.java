@@ -89,7 +89,17 @@ public class ListViewAdapterOffline extends BaseAdapter {
 
                 }
             });
+if (TeststartActivity.IDTestCompletedoff.equals(uid.get(position)))
+{
+    holder.test.setTitle("Upload Test");
+    holder.test.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            //TODO
 
+        }
+    });
+}
             holder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import ru.dimorinny.floatingtextbutton.FloatingTextButton;
+
 public class FeedbackActivity extends AppCompatActivity {
 
     String url="http://staging.tagusp.com/api/users/Get_feedback_questions";
@@ -49,7 +51,54 @@ Button submit;
             submit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    startActivity(new Intent(FeedbackActivity.this,MainActivity.class));
+                    LayoutInflater inflater = getLayoutInflater();
+                    View alertLayout = inflater.inflate(R.layout.batch_complete, null);
+                    final FloatingTextButton complete=alertLayout.findViewById(R.id.fab3);
+                    final FloatingTextButton another=alertLayout.findViewById(R.id.fab2);
+
+                    AlertDialog.Builder alert = new AlertDialog.Builder(FeedbackActivity.this);
+
+                    complete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            startActivity(new Intent(FeedbackActivity.this,TeststartActivity.class));
+                        }
+                    });
+
+                    another.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            startActivity(new Intent(FeedbackActivity.this,QuestionsActivity.class));
+
+                        }
+                    });
+
+
+                    // this is set the view from XML inside AlertDialog
+                    alert.setView(alertLayout);
+                    AlertDialog dialog = alert.create();
+                    dialog.show();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 }
             });
 

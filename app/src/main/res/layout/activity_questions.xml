@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".QuestionsActivity">
-
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <com.jskgmail.indiaskills.CenterLockHorizontalScrollview
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -50,6 +52,7 @@
 
 
     </LinearLayout>
+
     <TextView
         android:id="@+id/ques"
         android:layout_width="222dp"
@@ -57,7 +60,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="36dp"
-        android:layout_marginTop="116dp"
+        android:layout_marginTop="126dp"
         android:gravity="center_vertical"
         android:padding="3dp"
         android:text="Question"
@@ -68,9 +71,9 @@
         android:id="@+id/prv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignStart="@+id/qno"
-        android:layout_marginBottom="22dp"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/lv_options"
+        android:layout_marginTop="12dp"
         android:background="@color/colorPrimary"
         android:text="Previous"
         android:textColor="@android:color/white" />
@@ -102,6 +105,14 @@
         android:layout_alignTop="@+id/ques"
         android:layout_marginEnd="13dp"
         app:srcCompat="@android:drawable/screen_background_dark_transparent" />
+    <VideoView
+        android:id="@+id/video1"
+        android:layout_width="98dp"
+        android:layout_height="75dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/ques"
+        android:layout_marginEnd="13dp"
+        app:srcCompat="@android:drawable/screen_background_dark_transparent" />
 
     <TextView
         android:id="@+id/qno"
@@ -125,6 +136,6 @@
         android:background="@color/colorPrimary"
         android:text="BOOKMARK"
         android:textColor="@android:color/white" />
-
-
 </RelativeLayout>
+
+</ScrollView>

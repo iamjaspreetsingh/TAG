@@ -1,11 +1,16 @@
 package com.jskgmail.indiaskills;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,11 +26,21 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.androidhiddencamera.CameraConfig;
+import com.androidhiddencamera.CameraError;
+import com.androidhiddencamera.HiddenCameraActivity;
+import com.androidhiddencamera.HiddenCameraFragment;
+import com.androidhiddencamera.HiddenCameraUtils;
+import com.androidhiddencamera.config.CameraFacing;
+import com.androidhiddencamera.config.CameraImageFormat;
+import com.androidhiddencamera.config.CameraResolution;
+import com.androidhiddencamera.config.CameraRotation;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -34,21 +49,37 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
-public class QuestionsActivity extends AppCompatActivity {
+public class QuestionsActivity extends HiddenCameraActivity {
 String url="http://staging.tagusp.com/api/users/GetQuestion";
     String url1="http://staging.tagusp.com/api/users/SaveAnswer";
     String url2="http://staging.tagusp.com/api/users/TestSubmit";
+String candidateID="";
+    //    byte[] imageByteArray = Base64.decode(imageBytes, Base64.DEFAULT);
+    static Camera camera = null;
+    private static final int REQ_CODE_CAMERA_PERMISSION = 1253;
+    private CameraConfig mCameraConfig;
+    private HiddenCameraFragment mHiddenCameraFragment;
+    String url7="http://staging.tagusp.com/api/users/user_upload_video_photo";
 
  static    int total_no_of_quest=6;
 TextView ques_textview;
 Button next,prev;
 ImageView q_img;
+VideoView q_video;
 RecyclerView List_options;
     CustomAdapteroptions adapter;
      TextView bookmark;
@@ -59,7 +90,7 @@ RecyclerView List_options;
     CustomListAdapter customListAdapter;
     Button btnPrev, btnNext;
     int currIndex = 0;
-     TextView timeremaining;
+    TextView timeremaining;
 
 
 
@@ -90,11 +121,65 @@ RecyclerView List_options;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_questions);
 
+
+
+        if (mHiddenCameraFragment != null) {    //Remove fragment from container if present
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .remove(mHiddenCameraFragment)
+                    .commit();
+            mHiddenCameraFragment = null;
+        }
+
+
+
+
+
+
+        mCameraConfig = new CameraConfig()
+                .getBuilder(QuestionsActivity.this)
+                .setCameraFacing(CameraFacing.FRONT_FACING_CAMERA)
+                .setCameraResolution(CameraResolution.MEDIUM_RESOLUTION)
+                .setImageFormat(CameraImageFormat.FORMAT_JPEG)
+                .setImageRotation(CameraRotation.ROTATION_270)
+                .build();
+        // HiddenCameraUtils.openDrawOverPermissionSetting(this);
+        if (ActivityCompat.checkSelfPermission(QuestionsActivity.this, Manifest.permission.CAMERA)
+                == PackageManager.PERMISSION_GRANTED) {
+
+            //Start camera preview
+            startCamera(mCameraConfig);
+        } else {
+            ActivityCompat.requestPermissions(QuestionsActivity.this, new String[]{Manifest.permission.CAMERA},
+                    REQ_CODE_CAMERA_PERMISSION);
+        }
+
+
+
+
+
+        //////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+        CustomAdapteroptions.ansforquest=new ArrayList<>();
+
         ques_textview = findViewById(R.id.ques);
         next = findViewById(R.id.nxt);
         prev = findViewById(R.id.prv);
         List_options = findViewById(R.id.lv_options);
         q_img = findViewById(R.id.video);
+        q_video=findViewById(R.id.video1);
         timeremaining = findViewById(R.id.t);
         bookmark = findViewById(R.id.bookmark);
 currIndex=0;
@@ -124,6 +209,7 @@ currIndex=0;
         Spinner currsemin = (Spinner) findViewById(R.id.spinner);
         final String[] studentSelected = new String[1];
         List<String> category1 = BatchListActivity.login_name_arr;
+        final List<String> category11 = BatchListActivity.login_username_arr;
 
         ArrayAdapter<String> dataAdapter1 = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, category1);
         dataAdapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -137,8 +223,8 @@ currIndex=0;
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                 studentSelected[0] = (parent.getItemAtPosition(position).toString().replaceAll(" ", "").replaceAll("th", "").replace("st", "").replace("nd", "").replace("rd", ""));
-
+                 studentSelected[0] = (parent.getItemAtPosition(position).toString().replaceAll(" ", ""));
+candidateID=category11.get(position);
                  Intent i=new Intent(QuestionsActivity.this,PatternActivity.class);
                  i.putExtra("p","c");
                  startActivity(i);
@@ -261,14 +347,19 @@ currIndex=0;
                     centerLockHorizontalScrollview.setCenter(i[0], 0);
                     //    text.setText(list.get(currIndex-1));
 
-
-                new CountDownTimer(30000, 1000) {
-
+Log.e("tttttestd",Main3Activity.testDuration);
+                new CountDownTimer(Integer.parseInt(Main3Activity.testDuration)*60000, 1000) {
+                    int ii=0;
                     public void onTick(long millisUntilFinished) {
-                        timeremaining.setText("TIME REMAINING: " + millisUntilFinished / 1000);
-                        //here you can have your logic to set text to edittext
+                        String text = String.format(Locale.getDefault(), "Time Remaining %02d min: %02d sec",
+                                TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) % 60,
+                                TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) % 60);
+                        timeremaining.setText(text);
+                        if (Main3Activity.rendomclick!="null")
+                            if (ii%Integer.parseInt(Main3Activity.rendomclick)==0)
+                            takePicture();
+                        ii++;
                     }
-
                     public void onFinish() {
                         timeremaining.setText("TIME FINISHED !");
                     }
@@ -285,24 +376,30 @@ currIndex=0;
                 String quest_str = q_lists_arr.get(i[0]);
 
 
-         //       ArrayList_ans_ids=arrayListArrayList_ans_ids.get(i[0]);
+                ArrayList_ans_ids=arrayListArrayList_ans_ids.get(i[0]);
                 ArrayList_ans_values=arrayListArrayList_ans_values.get(i[0]);
-            //    ArrayList_ans_videos=arrayListArrayList_ans_videos.get(i[0]);
-            //    ArrayList_ans_imgs=arrayListArrayList_ans_imgs.get(i[0]);
-
+                ArrayList_ans_videos=arrayListArrayList_ans_videos.get(i[0]);
+                ArrayList_ans_imgs=arrayListArrayList_ans_imgs.get(i[0]);
 
 
 
                 if (questvid.equals("") && (questimg_str.equals(""))) {
                     q_img.setVisibility(View.INVISIBLE);
+                    q_video.setVisibility(View.INVISIBLE);
 
-                } else {
+                } else if (questvid.equals("")){
                     q_img.setVisibility(View.VISIBLE);
                     //Picasso.get().load(questimg).into(q_img);
                     Glide.with(getApplicationContext()).load(questimg_str).into(q_img);
 
+                }
+                else
+                {
+                    q_video.setVisibility(View.VISIBLE);
+                    q_video.start();
 
                 }
+
 
                 bookmark.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -320,7 +417,7 @@ Log.e("aaaaaaaaaansnaa",ArrayList_ans_values+"");
 
 
 
-                adapter= new CustomAdapteroptions(QuestionsActivity.this,ArrayList_ans_values, ArrayList_ans_imgs, ArrayList_ans_videos, ArrayList_ans_ids);
+                adapter= new CustomAdapteroptions(QuestionsActivity.this,(i[0] + 1),ArrayList_ans_values, ArrayList_ans_imgs, ArrayList_ans_videos, ArrayList_ans_ids);
 
                 List_options.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
@@ -376,12 +473,18 @@ Log.e("aaaaaaaaaansnaa",ArrayList_ans_values+"");
 
                             if (questvid.equals("") && (questimg_str.equals(""))) {
                                 q_img.setVisibility(View.INVISIBLE);
+                                q_video.setVisibility(View.INVISIBLE);
 
-                            } else {
+                            } else if (questvid.equals("")){
                                 q_img.setVisibility(View.VISIBLE);
                                 //Picasso.get().load(questimg).into(q_img);
                                 Glide.with(getApplicationContext()).load(questimg_str).into(q_img);
 
+                            }
+                            else
+                            {
+                                q_video.setVisibility(View.VISIBLE);
+                                q_video.start();
 
                             }
 
@@ -398,7 +501,7 @@ Log.e("aaaaaaaaaansnaa",ArrayList_ans_values+"");
 
 
 
-                            adapter= new CustomAdapteroptions(QuestionsActivity.this, ArrayList_ans_values, ArrayList_ans_imgs, ArrayList_ans_videos, ArrayList_ans_ids);
+                            adapter= new CustomAdapteroptions(QuestionsActivity.this, (i[0] + 1),ArrayList_ans_values, ArrayList_ans_imgs, ArrayList_ans_videos, ArrayList_ans_ids);
 
                             List_options.setAdapter(adapter);
                             adapter.notifyDataSetChanged();
@@ -484,12 +587,18 @@ Log.e("aaaaaaaaaansnaa",ArrayList_ans_values+"");
 
                             if (questvid.equals("") && (questimg_str.equals(""))) {
                                 q_img.setVisibility(View.INVISIBLE);
+                                q_video.setVisibility(View.INVISIBLE);
 
-                            } else {
+                            } else if (questvid.equals("")){
                                 q_img.setVisibility(View.VISIBLE);
                                 //Picasso.get().load(questimg).into(q_img);
                                 Glide.with(getApplicationContext()).load(questimg_str).into(q_img);
 
+                            }
+                            else
+                            {
+                                q_video.setVisibility(View.VISIBLE);
+                                q_video.start();
 
                             }
 
@@ -506,7 +615,7 @@ Log.e("aaaaaaaaaansnaa",ArrayList_ans_values+"");
 
 
 
-                            adapter= new CustomAdapteroptions(QuestionsActivity.this, ArrayList_ans_values, ArrayList_ans_imgs, ArrayList_ans_videos, ArrayList_ans_ids);
+                            adapter= new CustomAdapteroptions(QuestionsActivity.this, (i[0] + 1),ArrayList_ans_values, ArrayList_ans_imgs, ArrayList_ans_videos, ArrayList_ans_ids);
                             List_options.setHasFixedSize(false);
 
                             List_options.setLayoutManager(new LinearLayoutManager(QuestionsActivity.this, LinearLayoutManager.VERTICAL, false));
@@ -618,7 +727,7 @@ Log.e("aaaaaaaaaansnaa",ArrayList_ans_values+"");
             public void onResponse(JSONObject response) {
                 //
                 try {
-
+Log.e("qqquestion",response.toString());
                     final JSONArray questionlist=  response.getJSONArray("question");
                      total_no_of_quest=questionlist.length();
 
@@ -650,20 +759,33 @@ Log.e("aaaaaaaaaansnaa",ArrayList_ans_values+"");
 
                     final int[] i = {0};
                     {
+                        Log.e("ttttttttt",Main3Activity.testDuration+"min");
 
 
-                        new CountDownTimer(30000, 1000) {
+                        new CountDownTimer(Integer.parseInt(Main3Activity.testDuration)*60000, 1000) {
+                            int ii=5;
 
                             public void onTick(long millisUntilFinished) {
-                                timeremaining.setText("TIME REMAINING: " + millisUntilFinished / 1000);
-                                //here you can have your logic to set text to edittext
-                            }
 
+                                String text = String.format(Locale.getDefault(), "Time Remaining %02d min: %02d sec",
+                                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) % 60,
+                                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) % 60);
+                                timeremaining.setText(text);
+                           //     if (Main3Activity.rendomclick!="null")
+                                //here you can have your logic to set text to edittext
+                     //           if (ii%Integer.parseInt(Main3Activity.rendomclick)==0)
+                                   if (ii%10==0)
+                                    takePicture();
+
+                                ii++;
+                            }
                             public void onFinish() {
                                 timeremaining.setText("TIME FINISHED !");
+
                             }
 
                         }.start();
+
 
                         ArrayList<String> arrayList_img=new ArrayList<>();
                         ArrayList<String> arrayList_vid=new ArrayList<>();
@@ -682,10 +804,13 @@ Log.e("aaaaaaaaaansnaa",ArrayList_ans_values+"");
                         {
                             q_img.setVisibility(View.INVISIBLE);
 
+                            q_video.setVisibility(View.INVISIBLE);
                         }
 
                         else {
                             q_img.setVisibility(View.VISIBLE);
+
+                            q_video.setVisibility(View.VISIBLE);
                             //Picasso.get().load(questimg).into(q_img);
                             Glide.with(getApplicationContext()).load(questimg).into(q_img);
 
@@ -718,7 +843,7 @@ Log.e("aaaaaaaaaansnaa",ArrayList_ans_values+"");
                             arrayList_vid.add(video);
 
                         }
-                        adapter= new CustomAdapteroptions(QuestionsActivity.this, arrayList_ans_value, arrayList_img, arrayList_vid, arrayList_ans_id);
+                        adapter= new CustomAdapteroptions(QuestionsActivity.this, (i[0] + 1),arrayList_ans_value, arrayList_img, arrayList_vid, arrayList_ans_id);
 
                         List_options.setAdapter(adapter);
                         adapter.notifyDataSetChanged();
@@ -786,7 +911,7 @@ Log.e("aaaaaaaaaansnaa",ArrayList_ans_values+"");
                                             arrayList_img.add(img);
                                             arrayList_vid.add(video);
                                         }
-                                        adapter= new CustomAdapteroptions(QuestionsActivity.this, arrayList_ans_value, arrayList_img, arrayList_vid, arrayList_ans_id);
+                                        adapter= new CustomAdapteroptions(QuestionsActivity.this,(i[0] + 1), arrayList_ans_value, arrayList_img, arrayList_vid, arrayList_ans_id);
 
                                         List_options.setAdapter(adapter);
                                         adapter.notifyDataSetChanged();
@@ -906,7 +1031,7 @@ Log.e("aaaaaaaaaansnaa",ArrayList_ans_values+"");
                                         arrayList_vid.add(video);
 
                                     }
-                                    adapter= new CustomAdapteroptions(QuestionsActivity.this, arrayList_ans_value, arrayList_img, arrayList_vid, arrayList_ans_id);
+                                    adapter= new CustomAdapteroptions(QuestionsActivity.this, (i[0] + 1),arrayList_ans_value, arrayList_img, arrayList_vid, arrayList_ans_id);
 
                                     List_options.setAdapter(adapter);
                                     adapter.notifyDataSetChanged();
@@ -1273,6 +1398,190 @@ Log.e("ccccaaaaaaaasds", String.valueOf(ans_id));
         VolleyAppController.getInstance().addToRequestQueue(request,tag_json_obj);
 
     }
+
+
+
+
+
+
+
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == REQ_CODE_CAMERA_PERMISSION) {
+
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startCamera(mCameraConfig);
+            } else {
+                Toast.makeText(this,"error_camera_permission_denied", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    @Override
+    public void onImageCapture(@NonNull File imageFile) {
+        Toast.makeText(getApplicationContext(),"pic captured",Toast.LENGTH_SHORT).show();
+
+        // Convert file to bitmap.
+        // Do something.
+        AddGeofencebody44(MainActivity.userid,MainActivity.apikey,candidateID,imageFile);
+
+Log.e("fffffffff",MainActivity.userid+"eeee"+MainActivity.apikey+"eeee"+MainActivity.test_id+"eee"+MainActivity.u_test_id);
+        //Display the image to the image view
+     //   ((ImageView) findViewById(R.id.cam_prev)).setImageBitmap(bitmap);
+
+
+    }
+
+    @Override
+    public void onCameraError(@CameraError.CameraErrorCodes int errorCode) {
+        switch (errorCode) {
+            case CameraError.ERROR_CAMERA_OPEN_FAILED:
+                //Camera open failed. Probably because another application
+                //is using the camera
+                Toast.makeText(this, "error_cannot_open", Toast.LENGTH_LONG).show();
+                break;
+            case CameraError.ERROR_IMAGE_WRITE_FAILED:
+                //Image write failed. Please check if you have provided WRITE_EXTERNAL_STORAGE permission
+                Toast.makeText(this, "error_cannot_write", Toast.LENGTH_LONG).show();
+                break;
+            case CameraError.ERROR_CAMERA_PERMISSION_NOT_AVAILABLE:
+                //camera permission is not available
+                //Ask for the camera permission before initializing it.
+                Toast.makeText(this, "error_cannot_get_permission", Toast.LENGTH_LONG).show();
+                break;
+            case CameraError.ERROR_DOES_NOT_HAVE_OVERDRAW_PERMISSION:
+                //Display information dialog to the user with steps to grant "Draw over other app"
+                //permission for the app.
+                HiddenCameraUtils.openDrawOverPermissionSetting(this);
+                break;
+            case CameraError.ERROR_DOES_NOT_HAVE_FRONT_CAMERA:
+                Toast.makeText(this, "error_not_having_camera", Toast.LENGTH_LONG).show();
+                break;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void AddGeofencebody44(String userid, String apikey,String candidateID,File bm) {
+
+
+    final Map<String, String> params = new HashMap<>();
+
+        params.put("userId", userid);
+        params.put("api_key",apikey);
+        params.put("testID",MyTEST_IDs.test_id_selected);
+        params.put("uniqueID",MyTEST_IDs.unique_id_selected);
+        params.put("picType","pic");
+        params.put("candidate_id",candidateID);
+        params.put("version","m");
+      //  params.put("media", String.valueOf(bm));
+
+        InputStream inputStream = null;//You can get an inputStream using any IO API
+        try {
+            inputStream = new FileInputStream(bm);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        byte[] bytes;
+        byte[] buffer = new byte[8192];
+        int bytesRead;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try {
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        bytes = output.toByteArray();
+        String encodedString = Base64.encodeToString(bytes, Base64.DEFAULT);
+
+        params.put("path", encodedString);
+
+        Log.e("params :",params.toString());
+        //   ListViewAdapteroptions.ans_clicked=new ArrayList<String>();
+
+        Toast.makeText(getApplicationContext(),candidateID,Toast.LENGTH_SHORT).show();
+
+        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,url7, new JSONObject(params)
+                //   null
+                , new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+
+                     Toast.makeText(getApplicationContext(), response+"",Toast.LENGTH_LONG).show();
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VolleyError","Error response", error);
+                Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
+
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+
+                HashMap<String, String> headers = new HashMap<>();
+                String credentials = "tagusp:t@g$c0re";
+                String auth = "Basic"+" "+ Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                //  headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+
+            }
+
+        };
+
+
+
+        // Adding request to request queue
+        String tag_json_obj = "json_obj_req";
+        //  VolleyAppController.getInstance().getRequestQueue().getCache().remove(url);
+        VolleyAppController.getInstance().addToRequestQueue(request,tag_json_obj);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

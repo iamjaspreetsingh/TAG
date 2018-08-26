@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Base64;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -24,31 +25,14 @@ public class SaveTestOfflineActivity  {
  //   AlertDialog dialog = null;
 static Context context;
     private static ArrayList<String> TestDetailss_array=new ArrayList<>();
+    public static String alldata;
     private ArrayList<ArrayList<ArrayList>> arrayList_3_all_options=new ArrayList<>();
     private ArrayList<ArrayList> arrayList_3_all_questions=new ArrayList<>();
+    private ArrayList<ArrayList> arrayList_3_batch=new ArrayList<>();
 
 
 
     protected void onCreate() {
-
-    //    LayoutInflater inflater = getLayoutInflater();
-     //   View alertLayout = inflater.inflate(R.layout.loading, null);
-        //final ProgressBar progressBar=alertLayout.findViewById(R.id.progressBar);
-     //   TextView text=alertLayout.findViewById(R.id.text);
-     //   text.setText("Downloading the test....");
-     //    alert = new AlertDialog.Builder(this);
-
-        // this is set the view from XML inside AlertDialog
-     //   alert.setView(alertLayout);
-
-
-        // disallow cancel of AlertDialog on click of back button and outside touch
-        //   alert.setTitle("Password ");
-        //  alert.setIcon(R.drawable.ic_lock_outline_black_24dp);
-      //   dialog = alert.create();
-     //    dialog.setCancelable(false);
-     //   dialog.show();
-
 
 
 
@@ -63,7 +47,6 @@ static Context context;
     arrayList_3_all_options=new ArrayList<>();
   arrayList_3_all_questions=new ArrayList<>();
         TestDetailss_array=new ArrayList<>();
-
 
 
 
@@ -90,7 +73,9 @@ static Context context;
     //  final boolean[] processing = {true};
     String url2="http://staging.tagusp.com/api/users/Language";
     String url1="http://staging.tagusp.com/api/users/Instruction";
-   //static ArrayList<String> Languages_array=new ArrayList<>();
+    String url9="http://staging.tagusp.com/api/users/BatchList";
+
+    //static ArrayList<String> Languages_array=new ArrayList<>();
 
     String testName;
     String industry;
@@ -104,6 +89,7 @@ static Context context;
     String testDetails;
     String testDescriptions;
     String endTime;
+    String rendomclick;
 
     ArrayList<String> instructionsss=new ArrayList<String>();
     static String id,languageCode_selected="en";
@@ -115,16 +101,6 @@ static Context context;
     //save in  sqlite
 
 
-
-
-
-
-
-
-
-
-    // disallow cancel of AlertDialog on click of back button and outside touch
-    //   alert.setTitle("Password ");
 
 
 
@@ -172,9 +148,10 @@ static Context context;
                     testDetails=(String)response.get("testDetails");
                     testDescriptions=(String)response.get("testDescriptions");
                     endTime=(String)response.get("endTime");
+                    rendomclick=(String)response.get("test_rendomClick");
 
 
-                  //  TestDetailss_array.add(MyTEST_IDs.test_id_selected);
+                    //  TestDetailss_array.add(MyTEST_IDs.test_id_selected);
                     TestDetailss_array.add(MyTEST_IDs.unique_id_selected);
                     TestDetailss_array.add(testName);
                     TestDetailss_array.add(industry);
@@ -188,6 +165,7 @@ static Context context;
                     TestDetailss_array.add(testDetails);
                     TestDetailss_array.add(testDescriptions);
                     TestDetailss_array.add(endTime);
+                    TestDetailss_array.add(rendomclick);
 
 
 
@@ -407,13 +385,6 @@ private void getquests()
 
     private void AddGeofencebody6(final String testid, final String userid, final String api_key, String langcode, final String u_test_id) {
 
-
-        // disallow cancel of AlertDialog on click of back button and outside touch
-        //   alert.setTitle("Password ");
-        //  alert.setIcon(R.drawable.ic_lock_outline_black_24dp);
-
-
-
         Map<String, String> params = new HashMap<>();
         params.put("testID", testid);
         params.put("userId", userid);
@@ -522,6 +493,7 @@ private void getquests()
 
                 // } catch (JSONException e) {e.printStackTrace();}
                 // Store the JSON object in JSON array as objects (For level 1 array element i.e Results)
+                batchlist(MainActivity.userid,MainActivity.apikey);
 
             }
         }, new Response.ErrorListener() {
@@ -563,13 +535,13 @@ private void getquests()
         String TestDetail= gson.toJson(TestDetailss_array);
         String all_question= gson.toJson(arrayList_3_all_questions);
         String all_options= gson.toJson(arrayList_3_all_options);
-
+String all_batch= gson.toJson(arrayList_3_batch);
 
 
         DatabaseHandleroff db = new DatabaseHandleroff(context);
    //TODO
             String instructionList = "Be truthful!";
-        db.addContact(new TestDetailoff(instructionList,TestDetail,all_question,all_options ));
+        db.addContact(new TestDetailoff(instructionList,TestDetail,all_question,all_options,all_batch ));
 
 
       //  dialog.cancel();
@@ -585,6 +557,105 @@ private void getquests()
 
 
     }
+
+
+
+    private void batchlist(final String userid, final String apikey) {
+        arrayList_3_batch=new ArrayList<>();
+
+        final ArrayList<String> Batch_login_name_arr=new ArrayList<>();
+        final ArrayList<String> Batch_login_username_arr=new ArrayList<>();
+        Map<String, String> params = new HashMap<>();
+        params.put("userId", userid);
+        params.put("api_key", apikey);
+        Log.e("params :",params.toString());
+
+      //  login_name_arr=new ArrayList<>();login_username_arr=new ArrayList<>();
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,url9, new JSONObject(params)
+                //   null
+                , new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e("Data response", String.valueOf(response.toString()));
+          //      Toast.makeText(getApplicationContext(),"success",Toast.LENGTH_SHORT).show();
+                String batchId,batchName,uniqueID,testID,login_name,login_username,login_email;
+
+                try {
+
+                    JSONArray array=response.getJSONArray("batchList");
+                    JSONObject jsonobj_2 = (JSONObject) array.get(0);
+
+                    batchId=(String)jsonobj_2.get("batchId");
+                    batchName=(String)jsonobj_2.get("batchName");
+
+                    uniqueID=(String)jsonobj_2.get("uniqueID");
+                    testID=(String)jsonobj_2.get("testID");
+
+                 //   Log.e("arrgrrrruserss", batchName);
+                    Log.e("arrgrapikjj", batchId);
+
+
+
+                    JSONArray userList=jsonobj_2.getJSONArray("userList");
+                    JSONObject batch ;
+
+                    for (int i=0;i<userList.length();i++) {
+                        batch=userList.getJSONObject(i);
+                        login_name = (String) batch.get("name");
+                        login_username  = (String) batch.get("username");
+                        login_email = (String) batch.get("email");
+
+
+
+                        Batch_login_name_arr.add(login_name);
+                        Batch_login_username_arr.add(login_username);
+
+                    }
+                    arrayList_3_batch.add(Batch_login_name_arr);
+                    arrayList_3_batch.add(Batch_login_username_arr);
+                    Toast.makeText(context, arrayList_3_batch + "f",Toast.LENGTH_SHORT).show();
+                    Log.e("arrgrapikjjloginnaa", String.valueOf(arrayList_3_batch));
+
+                    //    Toast.makeText(getApplicationContext(),jsonobj_2.toString(),Toast.LENGTH_LONG).show();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                // Store the JSON object in JSON array as objects (For level 1 array element i.e Results)
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VolleyError","Error response", error);
+             //   Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+                String credentials = "tagusp:t@g$c0re";
+                String auth = "Basic"+" "+ Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                //  headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        // Adding request to request queue
+        String tag_json_obj = "json_obj_req";
+        //  VolleyAppController.getInstance().getRequestQueue().getCache().remove(url);
+        VolleyAppController.getInstance().addToRequestQueue(request,tag_json_obj);
+
+
+
+
+
+
+
+
+    }
+
 
 
 }

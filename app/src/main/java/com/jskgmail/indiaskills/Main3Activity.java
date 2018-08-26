@@ -40,10 +40,11 @@ public class Main3Activity extends AppCompatActivity {
     String testType;
     String testPrice;
     String testValidity;
-    String testDuration;
+   static String testDuration;
     String testDetails;
     String testDescriptions;
     String endTime;
+    static String rendomclick;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +112,7 @@ Toast.makeText(getApplicationContext(),MainActivity.online+"",Toast.LENGTH_LONG)
                      testDescriptions=testdet.get(11);
                      endTime=testdet.get(12);
 
+                     rendomclick=testdet.get(13);
                     Resume();
 
                 }
@@ -231,6 +233,7 @@ Toast.makeText(getApplicationContext(),MainActivity.online+"",Toast.LENGTH_LONG)
                      testDetails=(String)response.get("testDetails");
                      testDescriptions=(String)response.get("testDescriptions");
                      endTime=(String)response.get("endTime");
+                     rendomclick= String.valueOf(response.get("test_rendomClick"));
 //processing[0] =false;
                     Toast.makeText(getApplicationContext(),"success"+testName+industry,Toast.LENGTH_SHORT).show();
             //   handler=new Handler(callback);

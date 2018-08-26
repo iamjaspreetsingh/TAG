@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <ru.dimorinny.floatingtextbutton.FloatingTextButton
+        android:id="@+id/fab2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="2dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="2dp"
+        app:floating_background_color="@color/cardview_light_background"
+        app:floating_left_icon="@drawable/ic_person_black_24dp"
+        app:floating_title="Another student" />
+
+    <ru.dimorinny.floatingtextbutton.FloatingTextButton
+        android:id="@+id/fab3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="2dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="2dp"
+        app:floating_background_color="@color/cardview_light_background"
+        app:floating_left_icon="@drawable/ic_done_all_black_24dp"
+        app:floating_title="Complete Batch" />
+</LinearLayout>

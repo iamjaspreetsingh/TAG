@@ -11,25 +11,31 @@ public class TestDetailoff {
     private String instructionList;
     private String testDetailss_array;
     private String arrayList_3_all_questions;
-   private String arrayList_3_all_options;
-
+    private String arrayList_3_all_options;
+    private String arrayList_3_all_batch;
 
     // Empty constructor
-  public TestDetailoff(String instructionList, String testDetailss_array, String arrayList_3_all_questions, String arrayList_3_all_options)
-  {
+  public TestDetailoff(String instructionList, String testDetailss_array, String arrayList_3_all_questions,
+                       String arrayList_3_all_options,String arrayList_3_all_batch) {
       this.instructionList = instructionList;
       this.testDetailss_array = testDetailss_array;
       this.arrayList_3_all_questions = arrayList_3_all_questions;
       this.arrayList_3_all_options = arrayList_3_all_options;
+      this.arrayList_3_all_batch = arrayList_3_all_batch;
+
   }
-        // constructor
-        public TestDetailoff(int id, String instructionList, String testDetailss_array, String arrayList_3_all_questions, String arrayList_3_all_options)
+    // constructor
+        public TestDetailoff(int id, String instructionList, String testDetailss_array,
+                             String arrayList_3_all_questions, String arrayList_3_all_options,String arrayList_3_all_batch)
     {
             this._id = id;
             this.instructionList = instructionList;
             this.testDetailss_array = testDetailss_array;
             this.arrayList_3_all_questions = arrayList_3_all_questions;
             this.arrayList_3_all_options = arrayList_3_all_options;
+
+        this.arrayList_3_all_batch = arrayList_3_all_batch;
+
         }
 
     public TestDetailoff() {
@@ -90,7 +96,14 @@ public class TestDetailoff {
         this.arrayList_3_all_options = arrayList_3_all_options;
     }
 
+    public String getArrayList_3_all_batch(){
+        return this.arrayList_3_all_batch;
+    }
 
+    // setting name
+    public void setArrayList_3_all_batch(String arrayList_3_all_batch){
+        this.arrayList_3_all_batch = arrayList_3_all_batch;
+    }
 
 }
 

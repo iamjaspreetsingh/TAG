@@ -26,8 +26,10 @@ public class PatternActivity extends AppCompatActivity {
 heading=findViewById(R.id.heading);
         Intent intent = getIntent();
         p= intent.getStringExtra("p");
+if (p.equals("p"))
+    heading.setText("Enter temporary pattern for later verification");
 
-         mPatternLockView = (PatternLockView) findViewById(R.id.pattern_lock_view);
+            mPatternLockView = (PatternLockView) findViewById(R.id.pattern_lock_view);
         mPatternLockView.addPatternLockListener(mPatternLockViewListener);
     }
 
@@ -53,7 +55,6 @@ heading=findViewById(R.id.heading);
                mypattern= PatternLockUtils.patternToString(mPatternLockView, pattern);
                finish();
                 startActivity(new Intent(PatternActivity.this,Main5Activity.class));
-
             }
             else  if (p.equals("c"))
             {

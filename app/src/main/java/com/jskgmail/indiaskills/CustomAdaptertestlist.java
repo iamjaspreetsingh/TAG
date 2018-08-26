@@ -3,12 +3,23 @@ package com.jskgmail.indiaskills;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import ru.dimorinny.floatingtextbutton.FloatingTextButton;
 
@@ -18,6 +29,7 @@ public class CustomAdaptertestlist extends RecyclerView.Adapter<CustomAdaptertes
     ArrayList<String> name;
     ArrayList<String> id;
     ArrayList<String> uid;
+    String url7="http://staging.tagusp.com/api/users/OfflineTest";
 
 
     public CustomAdaptertestlist(Context context,ArrayList<String>uid , ArrayList<String> id,ArrayList<String> name) {
@@ -124,4 +136,98 @@ public class CustomAdaptertestlist extends RecyclerView.Adapter<CustomAdaptertes
 
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void AddGeofencebody44(String userid, String apikey,String candidateID) {
+
+
+        final Map<String, String> params = new HashMap<>();
+
+        params.put("userId", userid);
+        params.put("api_key",apikey);
+        params.put("testID",MyTEST_IDs.test_id_selected);
+        params.put("uniqueID",MyTEST_IDs.unique_id_selected);
+        params.put("version","m");
+
+        params.put("data",SaveTestOfflineActivity.alldata);
+
+        //  params.put("media", String.valueOf(bm));
+
+
+        Log.e("params :",params.toString());
+        //   ListViewAdapteroptions.ans_clicked=new ArrayList<String>();
+
+
+        final JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,url7, new JSONObject(params)
+                //   null
+                , new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+
+
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VolleyError","Error response", error);
+
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+
+                HashMap<String, String> headers = new HashMap<>();
+                String credentials = "tagusp:t@g$c0re";
+                String auth = "Basic"+" "+ Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                //  headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+
+            }
+
+        };
+
+
+
+        // Adding request to request queue
+        String tag_json_obj = "json_obj_req";
+        //  VolleyAppController.getInstance().getRequestQueue().getCache().remove(url);
+        VolleyAppController.getInstance().addToRequestQueue(request,tag_json_obj);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }

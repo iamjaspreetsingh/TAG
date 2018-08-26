@@ -92,7 +92,7 @@ pass=findViewById(R.id.pass);
                 @Override
                 public void onClick(View view) {
                     online=true;
-                    AddGeofencebody("e7m8s", "4vg?mXrF");
+                    AddGeofencebody("twgzl", "94588");
                 }
             });
         }
@@ -165,17 +165,17 @@ pass=findViewById(R.id.pass);
                     Toast.makeText(getApplicationContext(),"success",Toast.LENGTH_SHORT).show();
 
                     try {
-                         userid=(String)response.get("userID");
-                         apikey=(String)response.get("api_key");
+                         userid= String.valueOf(response.get("userID"));
+                         apikey= String.valueOf(response.get("api_key"));
                         Log.e("arrgrrrruser", userid);
                         Log.e("arrgrapik", apikey);
 
                         JSONArray array=response.getJSONArray("profile");
                         JSONObject jsonobj_2 = (JSONObject) array.get(0);
-                         login_name = (String) jsonobj_2.get("name");
-                         login_email=(String)jsonobj_2.get("email");
-                         login_phone=(String)jsonobj_2.get("phone");
-                         login_role=(String)jsonobj_2.get("role");
+                         login_name = String.valueOf(jsonobj_2.get("name"));
+                         login_email= String.valueOf(jsonobj_2.get("email"));
+                         login_phone= String.valueOf(jsonobj_2.get("phone"));
+                         login_role= String.valueOf(jsonobj_2.get("role"));
 
 
                         SharedPreferences.Editor editor= getSharedPreferences("TAGSCORE",MODE_PRIVATE).edit();
