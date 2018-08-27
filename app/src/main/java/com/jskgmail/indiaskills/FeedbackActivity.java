@@ -69,6 +69,12 @@ Button submit;
                         @Override
                         public void onClick(View view) {
                             startActivity(new Intent(FeedbackActivity.this,QuestionsActivity.class));
+//remove student list for spinner
+                           BatchListActivity.login_name_arr.remove(QuestionsActivity.studentSelected);
+                            BatchListActivity.login_username_arr.remove(QuestionsActivity.candidateID);
+
+
+
 
                         }
                     });

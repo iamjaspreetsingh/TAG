@@ -25,10 +25,13 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONObject;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,10 +45,13 @@ import static com.jskgmail.indiaskills.CustomAdapterbatch.ViewHolder.cam;
 public class CustomAdapterbatch extends RecyclerView.Adapter<CustomAdapterbatch.ViewHolder>  {
     //int height,width;
     Context context;
-int pos;
+private int pos;
+
+    static ArrayList<String> picsforoffline = new ArrayList<>();
+
     ArrayList<String> infos,infos1;
 
-    String url="http://staging.tagusp.com/api/users/Upload_candidate_photo_videos";
+    String url="http://staging.tagusp.com/api/users/user_upload_video_photo";
 
 
     public CustomAdapterbatch(Context context, ArrayList<String> infos, ArrayList<String> infos1) {
@@ -81,7 +87,6 @@ int pos;
 
         //  Toast.makeText(context, feed.getUsername(), Toast.LENGTH_SHORT).show();
 
-
        holder.title.setText(infos.get(position));
        holder.desc.setText(infos1.get(position));
 
@@ -93,10 +98,12 @@ int pos;
                 Intent i =new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                 ((Activity) context).startActivityForResult(i,cam);
                 holder.b2.setVisibility(View.GONE);
-pos=position;
+                pos=position;
+
 
             }
         });
+
         holder.b1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v)
@@ -105,6 +112,7 @@ pos=position;
                 ((Activity) context).startActivityForResult(i,cam);
                 holder.b1.setVisibility(View.GONE);
                 pos=position;
+
             }
         });
 
@@ -161,8 +169,8 @@ cc=itemView.findViewById(R.id.cc);
 
 
         }
-
-         protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+@Override
+public void onActivityResult(int requestCode, int resultCode, Intent data) {
             // TODO Auto-generated method stub
 
    //         super.onActivityResult(requestCode, resultCode, data);
@@ -204,16 +212,40 @@ cc=itemView.findViewById(R.id.cc);
 
             Map<String, String> params = new HashMap<>();
 
-            params.put("userId", userid);
-            params.put("api_key",apikey);
-            params.put("testID",MyTEST_IDs.test_id_selected);
-            params.put("uniqueID",MyTEST_IDs.unique_id_selected);
-            params.put("type","1");
-            params.put("candidate_id",candidateID);
-            params.put("version","P");
-            params.put("media", String.valueOf(bm));
 
-            Log.e("params :",params.toString());
+        params.put("userId", userid);
+        params.put("api_key",apikey);
+        params.put("testID",MyTEST_IDs.test_id_selected);
+        params.put("uniqueID",MyTEST_IDs.unique_id_selected);
+        params.put("picType","doc");
+        params.put("candidate_id",candidateID);
+        params.put("version","m");
+
+        InputStream inputStream = null;//You can get an inputStream using any IO API
+        try {
+            inputStream = new FileInputStream(bm);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        byte[] bytes;
+        byte[] buffer = new byte[8192];
+        int bytesRead;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try {
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                output.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        bytes = output.toByteArray();
+        String encodedString = Base64.encodeToString(bytes, Base64.DEFAULT);
+
+        params.put("path", encodedString);
+
+        picsforoffline.add(encodedString);
+
+        Log.e("params :",params.toString());
          //   ListViewAdapteroptions.ans_clicked=new ArrayList<String>();
 
 

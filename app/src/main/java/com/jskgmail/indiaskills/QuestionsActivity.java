@@ -67,7 +67,9 @@ public class QuestionsActivity extends HiddenCameraActivity {
 String url="http://staging.tagusp.com/api/users/GetQuestion";
     String url1="http://staging.tagusp.com/api/users/SaveAnswer";
     String url2="http://staging.tagusp.com/api/users/TestSubmit";
-String candidateID="";
+static String candidateID="";
+   static String studentSelected ="";
+
     //    byte[] imageByteArray = Base64.decode(imageBytes, Base64.DEFAULT);
     static Camera camera = null;
     private static final int REQ_CODE_CAMERA_PERMISSION = 1253;
@@ -207,7 +209,8 @@ currIndex=0;
 
 
         Spinner currsemin = (Spinner) findViewById(R.id.spinner);
-        final String[] studentSelected = new String[1];
+      //  final String[] studentSelected = new String[1];
+
         List<String> category1 = BatchListActivity.login_name_arr;
         final List<String> category11 = BatchListActivity.login_username_arr;
 
@@ -223,13 +226,13 @@ currIndex=0;
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                 studentSelected[0] = (parent.getItemAtPosition(position).toString().replaceAll(" ", ""));
+                 studentSelected = (parent.getItemAtPosition(position).toString().replaceAll(" ", ""));
 candidateID=category11.get(position);
                  Intent i=new Intent(QuestionsActivity.this,PatternActivity.class);
                  i.putExtra("p","c");
                  startActivity(i);
 
-                 Toast.makeText(getApplicationContext(),"Selected Student: "+studentSelected[0],Toast.LENGTH_LONG).show();
+                 Toast.makeText(getApplicationContext(),"Selected Student: "+studentSelected,Toast.LENGTH_LONG).show();
 
             }
 
@@ -355,9 +358,9 @@ Log.e("tttttestd",Main3Activity.testDuration);
                                 TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) % 60,
                                 TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) % 60);
                         timeremaining.setText(text);
-                        if (Main3Activity.rendomclick!="null")
-                            if (ii%Integer.parseInt(Main3Activity.rendomclick)==0)
-                            takePicture();
+                  //      if (Main3Activity.rendomclick!="null")
+                    //        if (ii%Integer.parseInt(Main3Activity.rendomclick)==0)
+                      //      takePicture();
                         ii++;
                     }
                     public void onFinish() {
@@ -523,6 +526,28 @@ Log.e("aaaaaaaaaansnaa",ArrayList_ans_values+"");
                                     public void onClick(View view) {
                                         //   AddGeofencebody44(testid,userid,api_key,Main4Activity.latitude+":"+Main4Activity.longitude, MyTEST_IDs.unique_id_selected,"dd","P");
                                         Toast.makeText(getApplicationContext(), "Your answers has been successfully submitted!", Snackbar.LENGTH_LONG).show();
+
+
+                                        Gson gson = new Gson();
+
+                                        String TestDetail= gson.toJson(Main3Activity.testdet);
+                                        String all_ans_opt= gson.toJson(CustomAdapteroptions.ans_clicked);
+
+                                        String all_batch_pics= gson.toJson
+                                                (CustomAdapterbatch.picsforoffline);
+
+
+
+                                        DatabaseHandleroffanswers db = new DatabaseHandleroffanswers(getApplicationContext());
+                                        //TODO feedback left
+                                        db.addContact(new TestDetailoffans(candidateID,TestDetail,all_batch_pics,all_ans_opt));
+
+
+
+
+
+
+
 
                                         startActivity(new Intent(QuestionsActivity.this, FeedbackActivity.class));
                                     }
@@ -811,8 +836,11 @@ Log.e("qqquestion",response.toString());
                             q_img.setVisibility(View.VISIBLE);
 
                             q_video.setVisibility(View.VISIBLE);
+                            //BASE 64 to img
+                            //byte[] questimgg=Base64.decode(questimg,Base64.DEFAULT);
+
                             //Picasso.get().load(questimg).into(q_img);
-                            Glide.with(getApplicationContext()).load(questimg).into(q_img);
+                            Glide.with(getApplicationContext()).load(questimg).into(q_img);//.asBitmap
 
 
                         }
@@ -861,6 +889,9 @@ Log.e("qqquestion",response.toString());
                             public void onClick(View view) {
 
 
+
+
+
                                 ArrayList<String> arrayList_img=new ArrayList<>();
                                 ArrayList<String> arrayList_vid=new ArrayList<>();
                                 ArrayList<String> arrayList_ans_id=new ArrayList<>();
@@ -889,6 +920,7 @@ Log.e("qqquestion",response.toString());
                                     try {
                                         quest = String.valueOf( question.get("question"));
                                          questvid= (String) question.get("questionVedio");
+
                                          questimg= (String) question.get("questionImage");
                                         quest_id=(String) question.get("id");
 
@@ -933,7 +965,10 @@ Log.e("qqquestion",response.toString());
 
                                     else {
                                         q_img.setVisibility(View.VISIBLE);
-                                        Glide.with(getApplicationContext()).load(questimg).into(q_img);
+
+                                        //BASE 64 to img
+                                        //byte[] questimgg=Base64.decode(questimg,Base64.DEFAULT);
+                                        Glide.with(getApplicationContext()).load(questimg).into(q_img);//.asBitmap
 
 
                                     }
@@ -1052,6 +1087,9 @@ Log.e("qqquestion",response.toString());
                                     }
 
                                     else {
+                                        //BASE 64 to img
+                                        //byte[] questimgg=Base64.decode(questimg,Base64.DEFAULT);//.asBitmap
+
                                         q_img.setVisibility(View.VISIBLE);
                                         Glide.with(getApplicationContext()).load(questimg).into(q_img);
 

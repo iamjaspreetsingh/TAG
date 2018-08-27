@@ -2,7 +2,11 @@ package com.jskgmail.indiaskills;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.support.v7.app.AlertDialog;
+import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +16,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONObject;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ru.dimorinny.floatingtextbutton.FloatingTextButton;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class ListViewAdapterOffline extends BaseAdapter {
@@ -77,6 +91,52 @@ public class ListViewAdapterOffline extends BaseAdapter {
           //  holder.txtviewcity=(TextView)convertView.findViewById(R.id.city);
 
             holder.txtviewname.setText(name.get(position));
+
+            SharedPreferences prefs = context.getSharedPreferences("testcompleted",MODE_PRIVATE);
+            String IDTestCompletedoff = prefs.getString("uid", null);
+
+            if (uid.get(position).equals(IDTestCompletedoff)) {
+
+                holder.test.setTitle("UPLOAD TEST");
+                holder.test.setLeftIconDrawable(Drawable.createFromPath(String.valueOf(R.drawable.ic_file_upload_black_24dp)));
+
+                holder.delete.setVisibility(View.GONE);
+
+                holder.test.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        DatabaseHandleroffanswers dbb = new DatabaseHandleroffanswers(context);
+
+                        Log.e("offtesting","start");
+
+                        List<TestDetailoffans> contactss = dbb.getAllContacts();
+                        for (TestDetailoffans cn : contactss) {
+
+
+
+
+                            uploadtest(cn.getCandidateid(), cn.getTestDetailss_array(), cn.getArrayList_3_all_pics(), cn.getArrayList_3_all_options());
+                        }
+
+
+                    }
+                });
+
+            }
+
+
+
+
+
+
+
+
+
+
+else
+
+
             holder.test.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -87,19 +147,10 @@ public class ListViewAdapterOffline extends BaseAdapter {
 
                     context.startActivity(new Intent(context,Main3Activity.class));
 
+
                 }
             });
-if (TeststartActivity.IDTestCompletedoff.equals(uid.get(position)))
-{
-    holder.test.setTitle("Upload Test");
-    holder.test.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            //TODO
 
-        }
-    });
-}
             holder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -195,4 +246,123 @@ if (TeststartActivity.IDTestCompletedoff.equals(uid.get(position)))
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private void uploadtest(final String candidateID, final String testdetail,String allpics,String ans_options) {
+
+        LayoutInflater inflater = context.getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.loading, null);
+        TextView text=alertLayout.findViewById(R.id.text);
+        text.setText("Uploading the test...");
+        //final ProgressBar progressBar=alertLayout.findViewById(R.id.progressBar);
+        AlertDialog.Builder alert= new AlertDialog.Builder(context);
+
+        // this is set the view from XML inside AlertDialog
+        alert.setView(alertLayout);
+
+
+
+        final AlertDialog dialog= alert.create();
+        dialog.show();
+
+
+        Map<String, String> params = new HashMap<>();
+        params.put("userId", MainActivity.userid);
+        params.put("TestDetail", testdetail);
+        params.put("All_Pics",allpics);
+        params.put("CandidateID",candidateID);
+        params.put("Answers", ans_options);
+        params.put("api_key", MainActivity.apikey);
+
+        Log.e("params :",params.toString());
+
+        //login_name_arr=new ArrayList<>();login_username_arr=new ArrayList<>();
+
+        String url="http://staging.tagusp.com/api/users/OfflineTest";
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,url, new JSONObject(params)
+                //   null
+                , new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.e("offtestupload", String.valueOf(response.toString()));
+
+                dialog.cancel();
+                // Store the JSON object in JSON array as objects (For level 1 array element i.e Results)
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("VolleyError","Error response", error);
+                //   Toast.makeText(getApplicationContext(),error.toString(),Toast.LENGTH_SHORT).show();
+            }
+        }) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                HashMap<String, String> headers = new HashMap<>();
+                String credentials = "tagusp:t@g$c0re";
+                String auth = "Basic"+" "+ Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                //  headers.put("Content-Type", "application/json");
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        // Adding request to request queue
+        String tag_json_obj = "json_obj_req";
+        //  VolleyAppController.getInstance().getRequestQueue().getCache().remove(url);
+        VolleyAppController.getInstance().addToRequestQueue(request,tag_json_obj);
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

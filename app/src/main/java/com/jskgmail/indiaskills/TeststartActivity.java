@@ -1,14 +1,15 @@
 package com.jskgmail.indiaskills;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import ru.dimorinny.floatingtextbutton.FloatingTextButton;
 
 public class TeststartActivity extends AppCompatActivity {
- static String IDTestCompletedoff="";
+ //static String IDTestCompletedoff="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +40,13 @@ public class TeststartActivity extends AppCompatActivity {
                 Intent i=(new Intent(TeststartActivity.this,Main5Activity.class));
           //      i.putExtra("completed_test",testidselected);
                 startActivity(i);
-              IDTestCompletedoff=  MyTEST_IDs.test_id_selected;
+                SharedPreferences.Editor editor= getSharedPreferences("testcompleted",MODE_PRIVATE).edit();
+                editor.putString("uid", MyTEST_IDs.unique_id_selected);
+
+
+                editor.apply();
+
+             //   IDTestCompletedoff=  MyTEST_IDs.unique_id_selected;
             }
         });
 

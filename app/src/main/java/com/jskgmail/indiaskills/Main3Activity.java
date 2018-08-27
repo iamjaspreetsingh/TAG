@@ -31,7 +31,7 @@ import java.util.Map;
 public class Main3Activity extends AppCompatActivity {
     String url="http://staging.tagusp.com/api/users/TestDetail";
   //  final boolean[] processing = {true};
-
+  static    ArrayList<String> testdet;
     String testName;
     String industry;
     String course;
@@ -44,7 +44,7 @@ public class Main3Activity extends AppCompatActivity {
     String testDetails;
     String testDescriptions;
     String endTime;
-    static String rendomclick;
+    static String rendomclick="10";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,7 +73,7 @@ Toast.makeText(getApplicationContext(),MainActivity.online+"",Toast.LENGTH_LONG)
             DatabaseHandleroff db = new DatabaseHandleroff(getApplicationContext());
             String test_det_str = null,test_q_str=null,test_ans_str=null,instr = null;
 
-            ArrayList<String> testdet=new ArrayList<>();
+     testdet=new ArrayList<>();
 
             List<TestDetailoff> contacts = db.getAllContacts();
             for (TestDetailoff cn : contacts) {
@@ -86,14 +86,6 @@ Toast.makeText(getApplicationContext(),MainActivity.online+"",Toast.LENGTH_LONG)
                     test_q_str = cn.getArrayList_3_all_questions();
                     test_ans_str = cn.getArrayList_3_all_options();
                     instr = cn.getInstructionList();
-
-
-
-
-
-
-
-
 
 
 

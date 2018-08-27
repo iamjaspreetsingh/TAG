@@ -1,5 +1,8 @@
 package com.jskgmail.indiaskills;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -7,10 +10,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,9 +61,9 @@ public class Main5Activity extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
+        MainActivity.online=isNetworkAvailable();
+
     }
-
-
 
 
     /**
@@ -98,21 +97,20 @@ public class Main5Activity extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.fragment_main5, container, false);
             View rootView1 = inflater.inflate(R.layout.fragment_main55, container, false);
 
-            if (getArguments().getInt(ARG_SECTION_NUMBER)==1)
-            {
-              //  MainActivity.online=true;
-           //     ListView listView = (ListView) rootView1.findViewById(R.id.list);
-                TextView no_net=rootView1.findViewById(R.id.noconnection);
+            if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
+                //  MainActivity.online=true;
+                ListView listView = (ListView) rootView1.findViewById(R.id.list);
+                TextView no_net = rootView1.findViewById(R.id.noconnection);
                 //  MainActivity.online=false;
                 if (!MainActivity.online)
                     no_net.setVisibility(View.VISIBLE);
 
-/*
-                ListViewAdapter adapter=new ListViewAdapter(getActivity(),MainActivity.arrayList_u_test_id,MainActivity.arrayList_test_id,MainActivity.arrayList_test_name);
+
+                ListViewAdapter adapter = new ListViewAdapter(getActivity(), MainActivity.arrayList_u_test_id, MainActivity.arrayList_test_id, MainActivity.arrayList_test_name);
                 listView.setAdapter(adapter);
-*/
 
 
+/*
 
 
                   RecyclerView recyclerView=rootView1.findViewById(R.id.list);;
@@ -127,24 +125,13 @@ public class Main5Activity extends AppCompatActivity {
                 recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL));
                 recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-
-
-
-
-
-
-
-
-
-
+*/
 
 
                 return rootView1;
 
-            }
-            else if (getArguments().getInt(ARG_SECTION_NUMBER)==2)
-            { ListView listView = (ListView) rootView.findViewById(R.id.offlinetests);
-
+            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 2) {
+                ListView listView = (ListView) rootView.findViewById(R.id.offlinetests);
 
 
                 Type type = new TypeToken<ArrayList<String>>() {
@@ -157,11 +144,11 @@ public class Main5Activity extends AppCompatActivity {
 
 
                 DatabaseHandleroff db = new DatabaseHandleroff(getContext());
-                String test_det_str = null,test_q_str=null,test_ans_str=null,instr = null;
+                String test_det_str = null, test_q_str = null, test_ans_str = null, instr = null;
 
-                ArrayList<String> testdet=new ArrayList<>();
-                ArrayList<String> off_test_NAMES=new ArrayList<>();
-                ArrayList<String> off_test_u_IDs=new ArrayList<>();
+                ArrayList<String> testdet = new ArrayList<>();
+                ArrayList<String> off_test_NAMES = new ArrayList<>();
+                ArrayList<String> off_test_u_IDs = new ArrayList<>();
 
                 List<TestDetailoff> contacts = db.getAllContacts();
                 for (TestDetailoff cn : contacts) {
@@ -178,9 +165,8 @@ public class Main5Activity extends AppCompatActivity {
                     off_test_u_IDs.add(testdet.get(0));
 
 
-
                 }
-  //              ArrayList<ArrayList<String>> testdet1 = gson.fromJson(test_q_str, type1);
+                //              ArrayList<ArrayList<String>> testdet1 = gson.fromJson(test_q_str, type1);
 //                ArrayList<ArrayList<ArrayList<String>>> testdet2 = gson.fromJson(test_ans_str, type1);
 
                 //    Log.e("jjjjjjjjjj", String.valueOf(testdet));
@@ -188,60 +174,50 @@ public class Main5Activity extends AppCompatActivity {
                 //      Log.e("jjjjjjjjjjbb", String.valueOf(testdet2));
                 //       Log.e("jjjjjjjjjjccc", String.valueOf(instr));
 
-                ListViewAdapterOffline adapter=new ListViewAdapterOffline(getActivity(),off_test_NAMES,off_test_u_IDs);
+                ListViewAdapterOffline adapter = new ListViewAdapterOffline(getActivity(), off_test_NAMES, off_test_u_IDs);
                 listView.setAdapter(adapter);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
                 return rootView;
 
+            } else
+
+                return rootView;
+
+        }
+        }
+
+
+        /**
+         * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
+         * one of the sections/tabs/pages.
+         */
+        public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+            public SectionsPagerAdapter(FragmentManager fm) {
+                super(fm);
             }
-            else
 
-            return rootView;
+            @Override
+            public Fragment getItem(int position) {
+                // getItem is called to instantiate the fragment for the given page.
+                // Return a PlaceholderFragment (defined as a static inner class below).
+                return PlaceholderFragment.newInstance(position + 1);
+            }
 
-
-
-
+            @Override
+            public int getCount() {
+                // Show 3 total pages.
+                return 2;
+            }
         }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 2;
-        }
-    }
 }

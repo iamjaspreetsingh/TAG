@@ -246,7 +246,7 @@ languageName=new ArrayList<>();
 
                 if(testdet.get(0).equals(MyTEST_IDs.unique_id_selected))
                 {
-                  //  test_q_str = cn.getArrayList_3_all_questions();
+                  //  test_q_str = cn.getArrayList_3_all_pics();
                    // test_ans_str = cn.getArrayList_3_all_options();
                     instr_str = cn.getInstructionList();
 

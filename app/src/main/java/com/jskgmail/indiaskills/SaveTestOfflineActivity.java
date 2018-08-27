@@ -148,7 +148,7 @@ static Context context;
                     testDetails=(String)response.get("testDetails");
                     testDescriptions=(String)response.get("testDescriptions");
                     endTime=(String)response.get("endTime");
-                    rendomclick=(String)response.get("test_rendomClick");
+                //    rendomclick=(String)response.get("test_rendomClick");
 
 
                     //  TestDetailss_array.add(MyTEST_IDs.test_id_selected);
@@ -469,10 +469,10 @@ private void getquests()
 
                    arrayList_3_all_options.add(arrayListArrayList_ans_ids);
                    arrayList_3_all_options.add(arrayListArrayList_ans_imgs);
-                  arrayList_3_all_options.add(arrayListArrayList_ans_values);
+                   arrayList_3_all_options.add(arrayListArrayList_ans_values);
                    arrayList_3_all_options.add(arrayListArrayList_ans_videos);
+                    batchlist(MainActivity.userid,MainActivity.apikey);
 
-                    saveoffline();
                     Log.e("aaaaaaaaaa",arrayList_3_all_options.toString());
 
                     Log.e("aaaaaaaaaannnnnn",arrayList_3_all_questions.toString());
@@ -493,7 +493,6 @@ private void getquests()
 
                 // } catch (JSONException e) {e.printStackTrace();}
                 // Store the JSON object in JSON array as objects (For level 1 array element i.e Results)
-                batchlist(MainActivity.userid,MainActivity.apikey);
 
             }
         }, new Response.ErrorListener() {
@@ -570,7 +569,7 @@ String all_batch= gson.toJson(arrayList_3_batch);
         params.put("api_key", apikey);
         Log.e("params :",params.toString());
 
-      //  login_name_arr=new ArrayList<>();login_username_arr=new ArrayList<>();
+        //login_name_arr=new ArrayList<>();login_username_arr=new ArrayList<>();
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,url9, new JSONObject(params)
                 //   null
@@ -616,6 +615,7 @@ String all_batch= gson.toJson(arrayList_3_batch);
                     arrayList_3_batch.add(Batch_login_username_arr);
                     Toast.makeText(context, arrayList_3_batch + "f",Toast.LENGTH_SHORT).show();
                     Log.e("arrgrapikjjloginnaa", String.valueOf(arrayList_3_batch));
+                    saveoffline();
 
                     //    Toast.makeText(getApplicationContext(),jsonobj_2.toString(),Toast.LENGTH_LONG).show();
 

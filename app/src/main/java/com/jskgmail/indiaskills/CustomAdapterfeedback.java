@@ -36,7 +36,6 @@ public class CustomAdapterfeedback extends RecyclerView.Adapter<CustomAdapterfee
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View itemView= inflater.inflate(R.layout.list_feedback,parent,false);
         CustomAdapterfeedback.ViewHolder holder= new CustomAdapterfeedback.ViewHolder(itemView);
-        // Toast.makeText(context, "blablabla", Toast.LENGTH_SHORT).show();
 
       //  getScreenSize();
         return holder;
